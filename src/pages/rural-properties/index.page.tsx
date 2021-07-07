@@ -14,7 +14,7 @@ import RuralPropertiesList from './_components/RuralPropertiesList';
 const RuralPropertiesPage: FC = () => {
   const history = useHistory();
 
-  const goToNewRuralProperty = () => {
+  const newRuralProperty = () => {
     history.push('/rural-properties/new');
   };
 
@@ -35,7 +35,7 @@ const RuralPropertiesPage: FC = () => {
 
       <RuralPropertiesList />
 
-      <Fab bottom={68} color="primary" onClick={goToNewRuralProperty}>
+      <Fab bottom={68} color="primary" onClick={newRuralProperty}>
         <AddOutlined />
       </Fab>
     </div>
