@@ -12,59 +12,57 @@ import ProgressBackdrop from '@components/base/ProgressBackdrop';
 import api from '@services/api';
 import handleAxiosError from '@utils/handleAxiosError';
 
-type UnitFormProps = {
-  unitId?: string;
+type ClassificationFormProps = {
+  classificationId?: string;
   goBack(): void;
 }
 
 type Inputs = {
   name: string;
-  abbreviation: string;
 }
 
-const UnitForm: FC<UnitFormProps> = (props) => {
-  const { unitId, goBack } = props;
+const ClassificationForm: FC<ClassificationFormProps> = (props) => {
+  const { classificationId, goBack } = props;
 
   const history = useHistory();
   const { control, handleSubmit, setValue } = useForm<Inputs>();
   const { addSnackbar } = useSnackbar();
 
-  const [backdrop, setBackdrop] = useState(!!unitId);
+  const [backdrop, setBackdrop] = useState(!!classificationId);
 
   const initForm = useCallback(() => {
-    if (unitId) {
-      api.get(`units/${unitId}`)
+    if (classificationId) {
+      api.get(`classifications/${classificationId}`)
         .then(res => {
           const ruralProperty = res.data;
           setValue('name', ruralProperty.name);
-          setValue('abbreviation', ruralProperty.abbreviation);
         })
         .catch((err) => handleAxiosError(err, addSnackbar))
         .finally(() => setBackdrop(false));
     }
     // eslint-disable-next-line
-  }, [unitId, setValue]);
+  }, [classificationId, setValue]);
 
   const onSubmit = (data: Inputs) => {
     setBackdrop(true);
 
-    if (unitId) {
-      api.put(`units/${unitId}`, data)
+    if (classificationId) {
+      api.put(`classifications/${classificationId}`, data)
         .then(() => {
-          addSnackbar('Unidade editada com sucesso!');
-          history.push('/units');
-          return;
+          addSnackbar('Classificação editada com sucesso!');
+          history.push('/classifications');
+          return
         })
         .catch((err) => handleAxiosError(err, addSnackbar))
         .finally(() => setBackdrop(false));
       return;
     }
 
-    api.post('units', data)
+    api.post('classifications', data)
       .then(() => {
-        addSnackbar('Unidade criada com sucesso!');
-        history.push('/units');
-        return
+        addSnackbar('Classificação criada com sucesso!');
+        history.push('/classifications');
+        return;
       })
       .catch((err) => handleAxiosError(err, addSnackbar))
       .finally(() => setBackdrop(false));
@@ -87,30 +85,11 @@ const UnitForm: FC<UnitFormProps> = (props) => {
           render={({ field: { value, onChange }, fieldState: { error } }) => (
             <TextField
               label="Nome *"
-              fullWidth
               value={value}
               onChange={onChange}
+              fullWidth
               error={!!error}
               helperText={error ? error.message : null}
-            />
-          )}
-        />
-
-        <br /><br /><br />
-
-        <Controller
-          name="abbreviation"
-          control={control}
-          defaultValue=""
-          rules={{ required: 'Abreviação é um campo obrigatório' }}
-          render={({ field: { value, onChange }, fieldState: { error } }) => (
-            <TextField 
-              label="Abreviação *" 
-              fullWidth 
-              value={value}
-              onChange={onChange}
-              error={!!error}
-              helperText={error ? error.message : null} 
             />
           )}
         />
@@ -126,7 +105,7 @@ const UnitForm: FC<UnitFormProps> = (props) => {
 
           <Grid item xs={6}>
             <Button type="submit" variant="contained" color="primary" fullWidth>
-              {unitId ? 'Salvar' : 'Criar'}
+              {classificationId ? 'Salvar' : 'Criar'}
             </Button>
           </Grid>
         </Grid>
@@ -135,4 +114,4 @@ const UnitForm: FC<UnitFormProps> = (props) => {
   );
 };
 
-export default UnitForm;
+export default ClassificationForm;

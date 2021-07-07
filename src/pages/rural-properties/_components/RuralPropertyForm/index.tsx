@@ -53,8 +53,10 @@ const RuralPropertyForm: FC<RuralPropertyFormProps> = (props) => {
         .then(() => {
           addSnackbar('Propriedade rural editada com sucesso!');
           history.push('/rural-properties');
+          return;
         })
-        .catch((err) => handleAxiosError(err, addSnackbar));
+        .catch((err) => handleAxiosError(err, addSnackbar))
+        .finally(() => setBackdrop(false));
       return;
     }
 
@@ -62,8 +64,10 @@ const RuralPropertyForm: FC<RuralPropertyFormProps> = (props) => {
       .then(() => {
         addSnackbar('Propriedade rural criada com sucesso!');
         history.push('/rural-properties');
+        return;
       })
-      .catch((err) => handleAxiosError(err, addSnackbar));
+      .catch((err) => handleAxiosError(err, addSnackbar))
+      .finally(() => setBackdrop(false));
   };
 
   useEffect(() => {
@@ -98,8 +102,16 @@ const RuralPropertyForm: FC<RuralPropertyFormProps> = (props) => {
           name="description"
           control={control}
           defaultValue=""
-          render={({ field }) => (
-            <TextField label="Descrição" fullWidth multiline {...field} />
+          render={({ field: { value, onChange }, fieldState: { error } }) => (
+            <TextField 
+              label="Descrição" 
+              fullWidth 
+              multiline 
+              value={value}
+              onChange={onChange}
+              error={!!error}
+              helperText={error ? error.message : null}
+            />
           )}
         />
 

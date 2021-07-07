@@ -21,17 +21,16 @@ import FlexBox from '@components/base/FlexBox';
 import api from '@services/api';
 import handleAxiosError from '@utils/handleAxiosError';
 
-type Unit = {
+type Classification = {
   id: string;
   name: string;
-  abbreviation: string;
 }
 
-const UnitsList: FC = () => {
+const ClassificationsList: FC = () => {
   const history = useHistory();
   const { addSnackbar } = useSnackbar();
 
-  const [units, setUnits] = useState<Unit[]>([]);
+  const [classifications, setClassifications] = useState<Classification[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const [menuAnchor, setMenuAnchor] = useState<HTMLButtonElement | null>(null);
@@ -40,30 +39,30 @@ const UnitsList: FC = () => {
   const [loadingProgress, setLoadingProgress] = useState(true);
 
   // eslint-disable-next-line
-  const getUnits = () => {
-    api.get('units')
+  const getClassifications = () => {
+    api.get('classifications')
       .then(res => {
-        setUnits(res.data);
+        setClassifications(res.data);
       })
       .catch((err) => handleAxiosError(err, addSnackbar))
       .finally(() => setLoadingProgress(false));
   }
 
-  const editUnit = () => {
-    history.push(`units/edit/${selectedId}`);
+  const editClassification = () => {
+    history.push(`classifications/edit/${selectedId}`);
   }
 
-  const deleteUnit = () => {
+  const deleteClassification = () => {
     closeMenu();
     closeContextMenu();
     alertDialog({
-      message: 'Tem certeza que quer apagar essa unidade?',
+      message: 'Tem certeza que quer apagar essa classificação?',
       onConfirmation: () => {
         setDeleteProgress(true);
-        api.delete(`units/${selectedId}`)
+        api.delete(`classifications/${selectedId}`)
           .then(() => {
-            addSnackbar('Unidade apagada com sucesso!');
-            setUnits(prev => prev.filter(unit => unit.id !== selectedId));
+            addSnackbar('Classificação apagada com sucesso!');
+            setClassifications(prev => prev.filter(classification => classification.id !== selectedId));
           })
           .catch((err) => handleAxiosError(err, addSnackbar))
           .finally(() => setDeleteProgress(false));
@@ -91,22 +90,21 @@ const UnitsList: FC = () => {
   };
 
   useEffect(() => {
-    getUnits();
+    getClassifications();
     // eslint-disable-next-line
   }, []);
 
   return (
     <div>
       <List>
-        {units.map((unit) => (
-          <ListItem onContextMenu={(e) => handleContextMenu(e, unit.id)} button key={unit.id}>
+        {classifications.map((classification) => (
+          <ListItem onContextMenu={(e) => handleContextMenu(e, classification.id)} button key={classification.id}>
             <ListItemText
-              primary={unit.name}
-              secondary={unit.abbreviation}
+              primary={classification.name}
             />
 
             <ListItemSecondaryAction>
-              <IconButton size="small" onClick={(e) => handleMenuClick(e, unit.id)}>
+              <IconButton size="small" onClick={(e) => handleMenuClick(e, classification.id)}>
                 <MoreVert />
               </IconButton>
             </ListItemSecondaryAction>
@@ -114,9 +112,9 @@ const UnitsList: FC = () => {
         ))}
       </List>
 
-      {!loadingProgress && units.length === 0 && (
+      {!loadingProgress && classifications.length === 0 && (
         <Typography variant="h6" align="center" color="textSecondary">
-          Não há unidades cadastradas...
+          Não há classificações cadastradas...
         </Typography>
       )}
 
@@ -132,10 +130,10 @@ const UnitsList: FC = () => {
         open={!!menuAnchor}
         onClose={closeMenu}
       >
-        <MenuItem dense onClick={editUnit}>
+        <MenuItem dense onClick={editClassification}>
           Editar
         </MenuItem>
-        <MenuItem dense onClick={deleteUnit}>
+        <MenuItem dense onClick={deleteClassification}>
           Apagar
         </MenuItem>
       </Menu>
@@ -151,21 +149,21 @@ const UnitsList: FC = () => {
             : undefined
         }
       >
-        <MenuItem dense onClick={editUnit}>
+        <MenuItem dense onClick={editClassification}>
           Editar
         </MenuItem>
-        <MenuItem dense onClick={deleteUnit}>
+        <MenuItem dense onClick={deleteClassification}>
           Apagar
         </MenuItem>
       </Menu>
 
       <ProgressDialog
         open={deleteProgress}
-        text="Aguarde. Apagando unidade."
+        text="Aguarde. Apagando classificação."
         onClose={() => setDeleteProgress(false)}
       />
     </div>
   );
 };
 
-export default UnitsList;
+export default ClassificationsList;

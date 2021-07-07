@@ -10,6 +10,10 @@ import UnitsPage from '@pages/units/index.page';
 import NewUnitPage from '@pages/units/new.page';
 import EditUnitPage from '@pages/units/edit.page';
 
+import ClassificationsPage from '@pages/classifications/index.page';
+import NewClassificationPage from '@pages/classifications/new.page';
+import EditClassificationPage from '@pages/classifications/edit.page';
+
 const Routes: FC = () => {
   return (
     <Switch>
@@ -19,6 +23,10 @@ const Routes: FC = () => {
       <Route exact path="/units" component={UnitsPage} />
       <Route path="/units/new" component={NewUnitPage} />
       <Route path="/units/edit/:id" component={EditUnitPage} />
+
+      <Route exact path="/classifications" component={ClassificationsPage} />
+      <Route path="/classifications/new" component={NewClassificationPage} />
+      <Route path="/classifications/edit/:id" component={EditClassificationPage} />
 
       <Route path="/" component={MainPage} />
     </Switch>
