@@ -4,27 +4,27 @@ import { useHistory } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 
 import AppBar from '@components/base/AppBar';
-import ClassificationForm from './_components/ClassificationForm';
+import CultivationForm from './_components/CultivationForm';
 
-const NewClassificationtPage: FC = () => {
+const NewCultivationtPage: FC = () => {
   const history = useHistory();
 
   const goBack = () => {
-    history.push('/classifications');
+    history.push('/cultivations');
   };
 
   return (
     <div>
       <AppBar
-        title="Nova Classificação"
+        title="Nova Cultura"
         goBack={goBack}
       />
 
       <Box mt={10} mx={1}>
-        <ClassificationForm goBack={goBack} />
+        <CultivationForm goBack={goBack} />
       </Box>
     </div>
   );
 };
 
-export default NewClassificationtPage;
+export default NewCultivationtPage;

@@ -53,10 +53,11 @@ const RuralPropertyForm: FC<RuralPropertyFormProps> = (props) => {
         .then(() => {
           addSnackbar('Propriedade rural editada com sucesso!');
           history.push('/rural-properties');
-          return;
         })
-        .catch((err) => handleAxiosError(err, addSnackbar))
-        .finally(() => setBackdrop(false));
+        .catch((err) => {
+          handleAxiosError(err, addSnackbar);
+          setBackdrop(false);
+        });
       return;
     }
 
@@ -64,10 +65,11 @@ const RuralPropertyForm: FC<RuralPropertyFormProps> = (props) => {
       .then(() => {
         addSnackbar('Propriedade rural criada com sucesso!');
         history.push('/rural-properties');
-        return;
       })
-      .catch((err) => handleAxiosError(err, addSnackbar))
-      .finally(() => setBackdrop(false));
+      .catch((err) => {
+        handleAxiosError(err, addSnackbar)
+        setBackdrop(false);
+      });
   };
 
   useEffect(() => {

@@ -5,14 +5,15 @@ import MaterialFab, { FabProps as MaterialFabProps } from '@material-ui/core/Fab
 import { FabContainer } from './styles';
 
 interface FabProps extends MaterialFabProps {
+  position?: 'fixed' | 'absolute';
   bottom?: number;
 }
 
 const Fab: FC<FabProps> = (props) => {
-  const { children, bottom } = props;
+  const { children, position, bottom } = props;
 
   return (
-    <FabContainer bottom={bottom}>
+    <FabContainer position={position} bottom={bottom}>
       <MaterialFab {...props}>
         {children}
       </MaterialFab>

@@ -1,14 +1,14 @@
-const handleAxiosError = (err: any, enqueueSnackbar: Function) => {
+const handleAxiosError = (err: any, addSnackbar: Function) => {
   if (err.response) {
-    enqueueSnackbar(err.response.data.message, {
+    addSnackbar(err.response.data.message, {
       variant: 'error'
     });
   } else if (err.request) {
-    enqueueSnackbar('Problema na conexão com o servidor!', {
+    addSnackbar('Problema na conexão com o servidor!', {
       variant: 'error'
     });
   } else {
-    enqueueSnackbar(err.message, {
+    addSnackbar(err.message, {
       variant: 'error'
     });
   }

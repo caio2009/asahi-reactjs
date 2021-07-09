@@ -53,10 +53,11 @@ const UnitForm: FC<UnitFormProps> = (props) => {
         .then(() => {
           addSnackbar('Unidade editada com sucesso!');
           history.push('/units');
-          return;
         })
-        .catch((err) => handleAxiosError(err, addSnackbar))
-        .finally(() => setBackdrop(false));
+        .catch((err) => {
+          handleAxiosError(err, addSnackbar)
+          setBackdrop(false);
+        });
       return;
     }
 
@@ -64,10 +65,11 @@ const UnitForm: FC<UnitFormProps> = (props) => {
       .then(() => {
         addSnackbar('Unidade criada com sucesso!');
         history.push('/units');
-        return
       })
-      .catch((err) => handleAxiosError(err, addSnackbar))
-      .finally(() => setBackdrop(false));
+      .catch((err) => {
+        handleAxiosError(err, addSnackbar)
+        setBackdrop(false);
+      });
   };
 
   useEffect(() => {

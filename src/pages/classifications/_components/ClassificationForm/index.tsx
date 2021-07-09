@@ -51,10 +51,11 @@ const ClassificationForm: FC<ClassificationFormProps> = (props) => {
         .then(() => {
           addSnackbar('Classificação editada com sucesso!');
           history.push('/classifications');
-          return
         })
-        .catch((err) => handleAxiosError(err, addSnackbar))
-        .finally(() => setBackdrop(false));
+        .catch((err) => {
+          handleAxiosError(err, addSnackbar)
+          setBackdrop(false);
+        });
       return;
     }
 
@@ -62,10 +63,11 @@ const ClassificationForm: FC<ClassificationFormProps> = (props) => {
       .then(() => {
         addSnackbar('Classificação criada com sucesso!');
         history.push('/classifications');
-        return;
       })
-      .catch((err) => handleAxiosError(err, addSnackbar))
-      .finally(() => setBackdrop(false));
+      .catch((err) => {
+        handleAxiosError(err, addSnackbar)
+        setBackdrop(false);
+      });
   };
 
   useEffect(() => {

@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
+import React, { FC, HTMLAttributes } from 'react';
 
 import { FlexBoxContainer } from './styles';
 
-type FlexBoxProps = {
+interface FlexBoxProps extends HTMLAttributes<HTMLDivElement> {
   direction?: 'row' | 'column';
   items?: 'flex-start' | 'center' | 'flex-end' | 'space-between' | 'space-around';
   content?: 'flex-start' | 'center' | 'flex-end' | 'space-between' | 'space-around';

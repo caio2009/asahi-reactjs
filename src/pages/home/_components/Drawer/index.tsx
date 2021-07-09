@@ -35,7 +35,7 @@ const Drawer: FC<DrawerProps> = (props) => {
       path: '/stock'
     }],
     part2: [{
-      text: 'Cultura',
+      text: 'Culturas',
       path: '/cultivations'
     }, {
       text: 'Classificações',
