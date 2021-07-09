@@ -5,6 +5,7 @@ import MainPage from '@pages/main/index.page';
 
 import NewRuralPropertyPage from '@pages/rural-properties/new.page';
 import EditRuralPropertyPage from '@pages/rural-properties/edit.page';
+import ManageRuralPropertyPage from '@pages/rural-properties/manage.page';
 
 import UnitsPage from '@pages/units/index.page';
 import NewUnitPage from '@pages/units/new.page';
@@ -23,6 +24,7 @@ const Routes: FC = () => {
     <Switch>
       <Route path="/rural-properties/new" component={NewRuralPropertyPage} />
       <Route path="/rural-properties/edit/:id" component={EditRuralPropertyPage} />
+      <Route path="/rural-properties/manage/:id" component={ManageRuralPropertyPage} />
 
       <Route exact path="/units" component={UnitsPage} />
       <Route path="/units/new" component={NewUnitPage} />

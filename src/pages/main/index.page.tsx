@@ -33,13 +33,13 @@ const MainPage: FC = () => {
             <Redirect to="/home" />
           </Route>
 
-          <Route exact path="/home">
+          <Route path="/home">
             <HomePage setBottomNavigationValue={setBottomNavigationValue} />
           </Route>
 
-          <Route exact path="/rural-properties" component={RuralPropertiesPage} />
+          <Route path="/rural-properties" component={RuralPropertiesPage} />
 
-          <Route exact path="/ceasa" component={CeasaPage} />
+          <Route path="/ceasa" component={CeasaPage} />
         </Switch>
       </ContentContainer>
 

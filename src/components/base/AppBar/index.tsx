@@ -11,9 +11,11 @@ import ArrowBack from '@material-ui/icons/ArrowBack';
 import Menu from '@material-ui/icons/Menu';
 
 import HideOnScroll from '@components/base/HideOnScroll';
+import FlexBox from '@components/base/FlexBox';
 
 interface AppBarProps {
   title: string;
+  subTitle?: string;
   backButton?: boolean;
   menuButton?: boolean;
   goBack?(): void;
@@ -24,13 +26,17 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
   toolbar: {
     paddingLeft: theme.spacing(0),
     paddingRight: theme.spacing(0)
+  },
+  title: {
+    fontWeight: 'bold'
   }
 }));
 
 const AppBar: FC<AppBarProps> = (props) => {
-  let { 
-    title, 
-    backButton = true, 
+  let {
+    title,
+    subTitle,
+    backButton = true,
     menuButton = false,
     goBack = () => null,
     onMenuClick = () => null
@@ -56,7 +62,13 @@ const AppBar: FC<AppBarProps> = (props) => {
             <Box px={1}></Box>
           )}
 
-          <Typography variant="h6">{title}</Typography>
+          <FlexBox direction="column" items="flex-start">
+            <Typography className={classes.title}>{title}</Typography>
+            
+            {subTitle && (
+              <Typography variant="caption">{subTitle}</Typography>
+            )}
+          </FlexBox>
         </Toolbar>
       </MaterialAppBar>
     </HideOnScroll>

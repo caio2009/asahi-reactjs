@@ -1,7 +1,5 @@
-import React, { FC, useState, useEffect, MouseEvent } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { FC, useState, useCallback, useEffect, MouseEvent } from 'react';
 import { useSnackbar } from '@hooks/useSnackbar';
-import { alertDialog } from '@hooks/useAlertDialog';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -21,17 +19,24 @@ import FlexBox from '@components/base/FlexBox';
 import api from '@services/api';
 import handleAxiosError from '@utils/handleAxiosError';
 
-type RuralProperty = {
-  id: string;
-  name: string;
-  description: string;
+type RuralPropertyFieldsListProps = {
+  ruralPropertyId: string;
 }
 
-const RuralPropertiesList: FC = () => {
-  const history = useHistory();
+type Field = {
+  id: string;
+  name: string;
+  cultivation: {
+    name: string;
+  };
+};
+
+const RuralPropertyFieldsList: FC<RuralPropertyFieldsListProps> = (props) => {
+  const { ruralPropertyId } = props;
+
   const { addSnackbar } = useSnackbar();
 
-  const [ruralProperties, setRuralProperties] = useState<RuralProperty[]>([]);
+  const [fields, setFields] = useState<Field[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const [menuAnchor, setMenuAnchor] = useState<HTMLButtonElement | null>(null);
@@ -39,41 +44,15 @@ const RuralPropertiesList: FC = () => {
   const [deleteProgress, setDeleteProgress] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(true);
 
-  // eslint-disable-next-line
-  const getRuralProperties = () => {
-    api.get('rural-properties')
-      .then(res => {
-        setRuralProperties(res.data);
+  const getFields = useCallback(() => {
+    api.get(`rural-properties/${ruralPropertyId}/fields`)
+      .then((res) => {
+        setFields(res.data);
       })
       .catch((err) => handleAxiosError(err, addSnackbar))
       .finally(() => setLoadingProgress(false));
-  };
-
-  const manageRuralProperty = (id?: string) => {
-    history.push(`/rural-properties/manage/${id || selectedId}`);
-  };
-
-  const editRuralProperty = () => {
-    history.push(`/rural-properties/edit/${selectedId}`);
-  };
-
-  const deleteRuralProperty = () => {
-    closeMenu();
-    closeContextMenu();
-    alertDialog({
-      message: 'Tem certeza que quer apagar essa propriedade rural?',
-      onConfirmation: () => {
-        setDeleteProgress(true);
-        api.delete(`/rural-properties/${selectedId}`)
-          .then(() => {
-            addSnackbar('Propriedade rural apagada com sucesso!');
-            setRuralProperties(prev => prev.filter(ruralProperty => ruralProperty.id !== selectedId));
-          })
-          .catch((err) => handleAxiosError(err, addSnackbar))
-          .finally(() => setDeleteProgress(false));
-      }
-    });
-  };
+      // eslint-disable-next-line
+  }, [ruralPropertyId]);
 
   const closeMenu = () => {
     setMenuAnchor(null);
@@ -95,27 +74,26 @@ const RuralPropertiesList: FC = () => {
   };
 
   useEffect(() => {
-    getRuralProperties();
-    // eslint-disable-next-line
-  }, []);
+    getFields();
+  }, [getFields]);
 
   return (
     <div>
       <List>
-        {ruralProperties.map((ruralProperty) => (
-          <ListItem 
-            key={ruralProperty.id}
+        {fields.map((field) => (
+          <ListItem
+            key={field.id}
             button
-            onContextMenu={(e) => handleContextMenu(e, ruralProperty.id)}
-            onClick={() => manageRuralProperty(ruralProperty.id)}
+            onContextMenu={() => null}
+            onClick={() => null}
           >
             <ListItemText
-              primary={ruralProperty.name}
-              secondary={ruralProperty.description || 'Sem descrição'}
+              primary={field.name}
+              secondary={field.cultivation.name}
             />
 
             <ListItemSecondaryAction>
-              <IconButton size="small" onClick={(e) => handleMenuClick(e, ruralProperty.id)}>
+              <IconButton size="small" onClick={() => null}>
                 <MoreVert />
               </IconButton>
             </ListItemSecondaryAction>
@@ -123,9 +101,9 @@ const RuralPropertiesList: FC = () => {
         ))}
       </List>
 
-      {!loadingProgress && ruralProperties.length === 0 && (
+      {!loadingProgress && fields.length === 0 && (
         <Typography variant="h6" align="center" color="textSecondary">
-          Não há propriedades rurais cadastradas...
+          Não há talhões nessa propriedade rural...
         </Typography>
       )}
 
@@ -141,13 +119,13 @@ const RuralPropertiesList: FC = () => {
         open={!!menuAnchor}
         onClose={closeMenu}
       >
-        <MenuItem dense onClick={() => manageRuralProperty()}>
+        <MenuItem dense onClick={() => null}>
           Gerenciar
         </MenuItem>
-        <MenuItem dense onClick={editRuralProperty}>
+        <MenuItem dense onClick={() => null}>
           Editar
         </MenuItem>
-        <MenuItem dense onClick={deleteRuralProperty}>
+        <MenuItem dense onClick={() => null}>
           Apagar
         </MenuItem>
       </Menu>
@@ -163,24 +141,24 @@ const RuralPropertiesList: FC = () => {
             : undefined
         }
       >
-        <MenuItem dense onClick={() => manageRuralProperty()}>
+        <MenuItem dense onClick={() => null}>
           Gerenciar
         </MenuItem>
-        <MenuItem dense onClick={editRuralProperty}>
+        <MenuItem dense onClick={() => null}>
           Editar
         </MenuItem>
-        <MenuItem dense onClick={deleteRuralProperty}>
+        <MenuItem dense onClick={() => null}>
           Apagar
         </MenuItem>
       </Menu>
 
       <ProgressDialog
         open={deleteProgress}
-        text="Aguarde. Apagando propriedade rural."
+        text="Aguarde. Apagando talhão."
         onClose={() => setDeleteProgress(false)}
       />
     </div>
   );
 };
 
-export default RuralPropertiesList;
+export default RuralPropertyFieldsList;
