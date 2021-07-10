@@ -19,6 +19,9 @@ import CultivationsPage from '@pages/cultivations/index.page';
 import NewCultivationPage from '@pages/cultivations/new.page';
 import EditCultivationPage from '@pages/cultivations/edit.page';
 
+import NewFieldPage from '@pages/fields/new.page';
+import EditFieldPage from '@pages/fields/edit.page';
+
 const Routes: FC = () => {
   return (
     <Switch>
@@ -37,6 +40,9 @@ const Routes: FC = () => {
       <Route exact path="/cultivations" component={CultivationsPage} />
       <Route path="/cultivations/new" component={NewCultivationPage} />
       <Route path="/cultivations/edit/:id" component={EditCultivationPage} />
+
+      <Route path="/rural-properties/:ruralPropertyId/fields/new" component={NewFieldPage} />
+      <Route path="/fields/edit/:id" component={EditFieldPage} />
 
       <Route path="/" component={MainPage} />
     </Switch>

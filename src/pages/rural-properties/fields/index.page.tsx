@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import Add from '@material-ui/icons/Add';
 
@@ -12,8 +13,10 @@ type RuralPropertyFieldsPageProps = {
 const RuralPropertyFieldsPage: FC<RuralPropertyFieldsPageProps> = (props) => {
   const { ruralPropertyId } = props;
 
-  const newField = () => {
+  const history = useHistory();
 
+  const newField = () => {
+    history.push(`/rural-properties/${ruralPropertyId}/fields/new`);
   };
 
   return (

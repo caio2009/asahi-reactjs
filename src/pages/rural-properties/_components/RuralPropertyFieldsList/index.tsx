@@ -1,5 +1,7 @@
 import React, { FC, useState, useCallback, useEffect, MouseEvent } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useSnackbar } from '@hooks/useSnackbar';
+import { alertDialog } from '@hooks/useAlertDialog';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -34,6 +36,7 @@ type Field = {
 const RuralPropertyFieldsList: FC<RuralPropertyFieldsListProps> = (props) => {
   const { ruralPropertyId } = props;
 
+  const history = useHistory();
   const { addSnackbar } = useSnackbar();
 
   const [fields, setFields] = useState<Field[]>([]);
@@ -53,6 +56,32 @@ const RuralPropertyFieldsList: FC<RuralPropertyFieldsListProps> = (props) => {
       .finally(() => setLoadingProgress(false));
       // eslint-disable-next-line
   }, [ruralPropertyId]);
+
+  const manageField = (id?: string) => {
+    history.push(`/fields/manage/${id || selectedId}`);
+  };
+
+  const editField = () => {
+    history.push(`/fields/edit/${selectedId}`);
+  };
+
+  const deleteField = () => {
+    closeMenu();
+    closeContextMenu();
+    alertDialog({
+      message: 'Tem certeza que quer apagar esse talhão?',
+      onConfirmation: () => {
+        setDeleteProgress(true);
+        api.delete(`/fields/${selectedId}`)
+          .then(() => {
+            addSnackbar('Talhão apagado com sucesso!');
+            setFields(prev => prev.filter(field => field.id !== selectedId));
+          })
+          .catch((err) => handleAxiosError(err, addSnackbar))
+          .finally(() => setDeleteProgress(false));
+      }
+    });
+  };
 
   const closeMenu = () => {
     setMenuAnchor(null);
@@ -84,16 +113,16 @@ const RuralPropertyFieldsList: FC<RuralPropertyFieldsListProps> = (props) => {
           <ListItem
             key={field.id}
             button
-            onContextMenu={() => null}
+            onContextMenu={(e) => handleContextMenu(e, field.id)}
             onClick={() => null}
           >
             <ListItemText
               primary={field.name}
-              secondary={field.cultivation.name}
+              secondary={`Cultura: ${field.cultivation.name}`}
             />
 
             <ListItemSecondaryAction>
-              <IconButton size="small" onClick={() => null}>
+              <IconButton size="small" onClick={(e) => handleMenuClick(e, field.id)}>
                 <MoreVert />
               </IconButton>
             </ListItemSecondaryAction>
@@ -122,10 +151,10 @@ const RuralPropertyFieldsList: FC<RuralPropertyFieldsListProps> = (props) => {
         <MenuItem dense onClick={() => null}>
           Gerenciar
         </MenuItem>
-        <MenuItem dense onClick={() => null}>
+        <MenuItem dense onClick={editField}>
           Editar
         </MenuItem>
-        <MenuItem dense onClick={() => null}>
+        <MenuItem dense onClick={deleteField}>
           Apagar
         </MenuItem>
       </Menu>
@@ -144,10 +173,10 @@ const RuralPropertyFieldsList: FC<RuralPropertyFieldsListProps> = (props) => {
         <MenuItem dense onClick={() => null}>
           Gerenciar
         </MenuItem>
-        <MenuItem dense onClick={() => null}>
+        <MenuItem dense onClick={editField}>
           Editar
         </MenuItem>
-        <MenuItem dense onClick={() => null}>
+        <MenuItem dense onClick={deleteField}>
           Apagar
         </MenuItem>
       </Menu>

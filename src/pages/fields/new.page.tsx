@@ -5,7 +5,8 @@ import { useSnackbar } from '@hooks/useSnackbar';
 import Box from '@material-ui/core/Box';
 
 import AppBar from '@components/base/AppBar';
-// import FieldForm from './_components/FieldForm';
+import ProgressBackdrop from '@components/base/ProgressBackdrop'; 
+import FieldForm from './_components/FieldForm';
 
 import api from '@services/api';
 import handleAxiosError from '@utils/handleAxiosError';
@@ -26,12 +27,16 @@ const NewFieldPage: FC = () => {
 
   const [ruralProperty, setRuralProperty] = useState<RuralProperty | null>(null);
 
+  const [backdrop, setBackdrop] = useState(true);
+
   const getRuralProperty = useCallback(() => {
     api.get(`rural-properties/${ruralPropertyId}`)
       .then((res) => {
         setRuralProperty(res.data);
       })
-      .catch((err) => handleAxiosError(err, addSnackbar));
+      .catch((err) => handleAxiosError(err, addSnackbar))
+      .finally(() => setBackdrop(false));
+      // eslint-disable-next-line
   }, [ruralPropertyId]);
 
   const goBack = () => {
@@ -44,13 +49,19 @@ const NewFieldPage: FC = () => {
 
   return (
     <div>
+      <ProgressBackdrop open={backdrop} />
+
       <AppBar
-        title="Novo Talhão"
+        title={ruralProperty ? ruralProperty.name : ''}
+        subTitle="Novo Talhão"
         goBack={goBack}
       />
 
       <Box mt={10} mx={1}>
-        {/* <FieldForm goBack={goBack} /> */}
+        <FieldForm 
+          goBack={goBack}
+          initialValues={{ ruralPropertyId }}
+        />
       </Box>
     </div>
   );
