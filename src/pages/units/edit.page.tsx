@@ -15,7 +15,7 @@ const EditUnitPage: FC = () => {
   const { id } = useParams() as Params;
 
   const goBack = () => {
-    history.push('/units');
+    history.goBack();
   };
 
   return (

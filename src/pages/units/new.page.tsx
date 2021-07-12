@@ -10,7 +10,7 @@ const NewUnitPage: FC = () => {
   const history = useHistory();
 
   const goBack = () => {
-    history.push('/units');
+    history.goBack();
   };
 
   return (

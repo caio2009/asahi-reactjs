@@ -50,7 +50,7 @@ const ClassificationForm: FC<ClassificationFormProps> = (props) => {
       api.put(`classifications/${classificationId}`, data)
         .then(() => {
           addSnackbar('Classificação editada com sucesso!');
-          history.push('/classifications');
+          history.goBack();
         })
         .catch((err) => {
           handleAxiosError(err, addSnackbar)
@@ -62,7 +62,7 @@ const ClassificationForm: FC<ClassificationFormProps> = (props) => {
     api.post('classifications', data)
       .then(() => {
         addSnackbar('Classificação criada com sucesso!');
-        history.push('/classifications');
+        history.goBack();
       })
       .catch((err) => {
         handleAxiosError(err, addSnackbar)

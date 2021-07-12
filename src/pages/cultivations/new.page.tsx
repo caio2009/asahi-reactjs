@@ -10,7 +10,7 @@ const NewCultivationtPage: FC = () => {
   const history = useHistory();
 
   const goBack = () => {
-    history.push('/cultivations');
+    history.goBack();
   };
 
   return (

@@ -65,7 +65,7 @@ const CultivationForm: FC<CultivationFormProps> = (props) => {
       api.put(`cultivations/${cultivationId}`, formData)
         .then(() => {
           addSnackbar('Cultura editada com sucesso!');
-          history.push('/cultivations');
+          history.goBack();
         })
         .catch((err) => {
           handleAxiosError(err, addSnackbar);
@@ -77,7 +77,7 @@ const CultivationForm: FC<CultivationFormProps> = (props) => {
     api.post('cultivations', formData)
       .then(() => {
         addSnackbar('Cultura criada com sucesso!');
-        history.push('/cultivations');
+        history.goBack();
       })
       .catch((err) => {
         handleAxiosError(err, addSnackbar);

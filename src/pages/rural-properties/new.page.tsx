@@ -10,7 +10,7 @@ const NewRuralPropertyPage: FC = () => {
   const history = useHistory();
 
   const goBack = () => {
-    history.push('/rural-properties');
+    history.goBack();
   };
 
   return (

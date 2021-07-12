@@ -17,7 +17,7 @@ const CultivationsPage: FC = () => {
   };
 
   const goBack = () => {
-    history.push('/home');
+    history.goBack();
   }
 
   return (

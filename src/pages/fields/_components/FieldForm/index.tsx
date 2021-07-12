@@ -155,6 +155,7 @@ const FieldForm: FC<FieldFormProps> = (props) => {
                   value={value}
                   onChange={onChange}
                 >
+                  {cultivations.length === 0 && <MenuItem>Vazio</MenuItem>}
                   {cultivations.map(cultivation => (
                     <MenuItem key={cultivation.id} value={cultivation.id}>{cultivation.name}</MenuItem>
                   ))}

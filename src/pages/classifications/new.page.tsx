@@ -10,7 +10,7 @@ const NewClassificationtPage: FC = () => {
   const history = useHistory();
 
   const goBack = () => {
-    history.push('/classifications');
+    history.goBack();
   };
 
   return (

@@ -114,7 +114,7 @@ const RuralPropertyFieldsList: FC<RuralPropertyFieldsListProps> = (props) => {
             key={field.id}
             button
             onContextMenu={(e) => handleContextMenu(e, field.id)}
-            onClick={() => null}
+            onClick={() => manageField(field.id)}
           >
             <ListItemText
               primary={field.name}
@@ -148,7 +148,7 @@ const RuralPropertyFieldsList: FC<RuralPropertyFieldsListProps> = (props) => {
         open={!!menuAnchor}
         onClose={closeMenu}
       >
-        <MenuItem dense onClick={() => null}>
+        <MenuItem dense onClick={() => manageField()}>
           Gerenciar
         </MenuItem>
         <MenuItem dense onClick={editField}>
@@ -170,7 +170,7 @@ const RuralPropertyFieldsList: FC<RuralPropertyFieldsListProps> = (props) => {
             : undefined
         }
       >
-        <MenuItem dense onClick={() => null}>
+        <MenuItem dense onClick={() => manageField()}>
           Gerenciar
         </MenuItem>
         <MenuItem dense onClick={editField}>

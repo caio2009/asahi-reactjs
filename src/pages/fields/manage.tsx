@@ -7,12 +7,11 @@ import Box from '@material-ui/core/Box';
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 
 import AppBar from '@components/base/AppBar';
 import ProgressDialog from '@components/dialog/ProgressDialog';
-import RuralPropertyFieldsPage from '@pages/rural-properties/fields/index.page';
+import FieldHarvestsPage from '@pages/fields/harvests/index.page';
 
 import api from '@services/api';
 import handleAxiosError from '@utils/handleAxiosError';
@@ -22,26 +21,28 @@ type Params = {
   id: string;
 }
 
-type RuralProperty = {
+type Field = {
   id: string;
   name: string;
-  description: string;
+  ruralProperty: {
+    name: string;
+  };
 }
 
-const ManageRuralPropertyPage: FC = () => {
+const ManageFieldPage: FC = () => {
   const history = useHistory();
   const { path, url } = useRouteMatch();
   const { id } = useParams() as Params;
   const { addSnackbar } = useSnackbar();
 
-  const [ruralProperty, setRuralProperty] = useState<RuralProperty | null>(null);
+  const [field, setField] = useState<Field | null>(null);
 
-  const [tabValue, setTabValue] = useState('fields');
+  const [tabValue, setTabValue] = useState('harvests');
   const [deleteProgress, setDeleteProgress] = useState(false);
 
   const getRuralProperties = useCallback(() => {
-    api.get(`rural-properties/${id}`).then(res => {
-      setRuralProperty(res.data);
+    api.get(`fields/${id}`).then(res => {
+      setField(res.data);
     })
       .catch((err) => handleAxiosError(err, addSnackbar));
     // eslint-disable-next-line
@@ -56,18 +57,18 @@ const ManageRuralPropertyPage: FC = () => {
     history.push(`${url}/${newValue}`);
   };
 
-  const editRuralProperty = () => {
-    history.push(`/rural-properties/edit/${id}`);
+  const editField = () => {
+    history.push(`/fields/edit/${id}`);
   };
 
-  const deleteRuralProperty = () => {
+  const deleteField = () => {
     alertDialog({
-      message: 'Tem certeza que quer apagar essa propriedade rural?',
+      message: 'Tem certeza que quer apagar esse talhão?',
       onConfirmation: () => {
         setDeleteProgress(true);
-        api.delete(`/rural-properties/${id}`)
+        api.delete(`/fields/${id}`)
           .then(() => {
-            addSnackbar('Propriedade rural apagada com sucesso!');
+            addSnackbar('Talhão apagado com sucesso!');
             history.goBack();
           })
           .catch((err) => {
@@ -85,14 +86,14 @@ const ManageRuralPropertyPage: FC = () => {
   return (
     <div>
       <AppBar
-        title={ruralProperty ? ruralProperty.name : ''}
-        subTitle="Gerenciar Propriedade Rural"
+        title={field ? `${field.ruralProperty.name} > ${field.name}` : ''}
+        subTitle="Gerenciar Talhão"
         goBack={goBack}
         moreOptions={[
-          <MenuItem key={0} dense onClick={editRuralProperty}>
+          <MenuItem key={0} dense onClick={editField}>
             Editar
           </MenuItem>,
-          <MenuItem key={1} dense onClick={deleteRuralProperty}>
+          <MenuItem key={1} dense onClick={deleteField}>
             Apagar
           </MenuItem>
         ]}
@@ -101,7 +102,6 @@ const ManageRuralPropertyPage: FC = () => {
       <Box mt={6}>
         <Paper square>
           <Tabs value={tabValue} onChange={handleTabChange}>
-            <Tab value="fields" label="TALHÕES" />
             <Tab value="harvests" label="COLHEITAS" />
           </Tabs>
         </Paper>
@@ -109,15 +109,11 @@ const ManageRuralPropertyPage: FC = () => {
 
       <Switch>
         <Route exact path={`${path}`}>
-          <Redirect to={`${url}/fields`} />
-        </Route>
-
-        <Route path={`${path}/fields`}>
-          <RuralPropertyFieldsPage ruralPropertyId={id} />
+          <Redirect to={`${url}/harvests`} />
         </Route>
 
         <Route path={`${path}/harvests`}>
-          <Typography>Em desenvolvimento...</Typography>
+          <FieldHarvestsPage fieldId={id} />
         </Route>
       </Switch>
 
@@ -130,4 +126,4 @@ const ManageRuralPropertyPage: FC = () => {
   );
 };
 
-export default ManageRuralPropertyPage;
+export default ManageFieldPage;

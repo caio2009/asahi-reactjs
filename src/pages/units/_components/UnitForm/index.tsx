@@ -52,7 +52,7 @@ const UnitForm: FC<UnitFormProps> = (props) => {
       api.put(`units/${unitId}`, data)
         .then(() => {
           addSnackbar('Unidade editada com sucesso!');
-          history.push('/units');
+          history.goBack();
         })
         .catch((err) => {
           handleAxiosError(err, addSnackbar)
@@ -64,7 +64,7 @@ const UnitForm: FC<UnitFormProps> = (props) => {
     api.post('units', data)
       .then(() => {
         addSnackbar('Unidade criada com sucesso!');
-        history.push('/units');
+        history.goBack();
       })
       .catch((err) => {
         handleAxiosError(err, addSnackbar)

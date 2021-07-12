@@ -6,6 +6,7 @@ interface FlexBoxProps extends HTMLAttributes<HTMLDivElement> {
   direction?: 'row' | 'column';
   items?: 'flex-start' | 'center' | 'flex-end' | 'space-between' | 'space-around';
   content?: 'flex-start' | 'center' | 'flex-end' | 'space-between' | 'space-around';
+  flexGrow?: number;
 }
 
 const FlexBox: FC<FlexBoxProps> = ({ children, ...rest }) => {

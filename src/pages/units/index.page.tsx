@@ -17,7 +17,7 @@ const UnitsPage: FC = () => {
   };
 
   const goBack = () => {
-    history.push('/home');
+    history.goBack();
   }
 
   return (

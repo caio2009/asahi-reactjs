@@ -15,7 +15,7 @@ const EditCultivationPage: FC = () => {
   const { id } = useParams() as Params;
 
   const goBack = () => {
-    history.push('/cultivations');
+    history.goBack();
   };
 
   return (

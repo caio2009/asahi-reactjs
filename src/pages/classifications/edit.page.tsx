@@ -15,7 +15,7 @@ const EditClassificationPage: FC = () => {
   const { id } = useParams() as Params;
 
   const goBack = () => {
-    history.push('/classifications');
+    history.goBack();
   };
 
   return (

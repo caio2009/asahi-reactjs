@@ -52,7 +52,7 @@ const RuralPropertyForm: FC<RuralPropertyFormProps> = (props) => {
       api.put(`rural-properties/${ruralPropertyId}`, data)
         .then(() => {
           addSnackbar('Propriedade rural editada com sucesso!');
-          history.push('/rural-properties');
+          history.goBack();
         })
         .catch((err) => {
           handleAxiosError(err, addSnackbar);
@@ -64,7 +64,7 @@ const RuralPropertyForm: FC<RuralPropertyFormProps> = (props) => {
     api.post('rural-properties', data)
       .then(() => {
         addSnackbar('Propriedade rural criada com sucesso!');
-        history.push('/rural-properties');
+        history.goBack();
       })
       .catch((err) => {
         handleAxiosError(err, addSnackbar)

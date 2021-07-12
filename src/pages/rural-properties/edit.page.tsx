@@ -15,7 +15,7 @@ const EditRuralPropertyPage: FC = () => {
   const { id } = useParams() as Params;
 
   const goBack = () => {
-    history.push('/rural-properties');
+    history.goBack();
   };
 
   return (
