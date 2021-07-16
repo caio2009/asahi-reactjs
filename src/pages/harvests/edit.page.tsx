@@ -43,8 +43,6 @@ const EditHarvestPage: FC = () => {
   const { id } = useParams() as Params;
   const { addSnackbar } = useSnackbar();
 
-  const timezoneOffset = new Date().getTimezoneOffset();
-
   const [harvest, setHarvest] = useState<Harvest | null>(null);
 
   const [backdrop, setBackdrop] = useState(true);
@@ -83,7 +81,7 @@ const EditHarvestPage: FC = () => {
             harvestId={id}
             goBack={goBack}
             initialValues={{
-              date: formatDate(new Date(new Date(harvest.date).getTime() + (timezoneOffset * 60 * 1000)), 'yyyy-MM-dd'),
+              date: formatDate(new Date(harvest.date), 'yyyy-MM-dd'),
               quantity: harvest.quantity,
               fieldId: harvest.field.id,
               classificationId: harvest.classification.id,

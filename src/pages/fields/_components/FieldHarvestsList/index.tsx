@@ -58,8 +58,6 @@ const FieldHarvestsList: FC<FieldHarvestsListProps> = (props) => {
   const history = useHistory();
   const { addSnackbar } = useSnackbar();
 
-  const timezoneOffset = new Date().getTimezoneOffset();
-
   const [harvests, setHarvests] = useState<HarvestMappedByDate[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null); // saving the date to help when delete a harvest
@@ -140,7 +138,7 @@ const FieldHarvestsList: FC<FieldHarvestsListProps> = (props) => {
             <li>
               <ul>
                 <ListSubheader>{
-                  formatDate(new Date(new Date(mappedHarvest.date).getTime() + (timezoneOffset * 60 * 1000)), 'dd/MM/yyyy')
+                  formatDate(new Date(mappedHarvest.date), 'dd/MM/yyyy')
                 }</ListSubheader>
                 {mappedHarvest.harvests.map((harvest) => (
                   <ListItem

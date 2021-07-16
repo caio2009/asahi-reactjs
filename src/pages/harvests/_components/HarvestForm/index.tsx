@@ -106,7 +106,9 @@ const HarvestForm: FC<HarvestFormProps> = (props) => {
     // setBackdrop(true);
 
     if (data.date) {
-      data.date = new Date(data.date);
+      const date = new Date(data.date);
+      const timezoneOffset = date.getTimezoneOffset();
+      data.date = new Date(date.getTime() + (timezoneOffset * 60 * 1000));
     }
 
     if (harvestId) {
