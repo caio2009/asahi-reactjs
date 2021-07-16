@@ -1,11 +1,43 @@
 import React, { FC } from 'react';
+import { useHistory } from 'react-router-dom';
+
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import IconButton from '@material-ui/core/IconButton';
+
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 import AppBar from '@components/base/AppBar';
 
 const CeasaPage: FC = () => {
+  const history = useHistory();
+
+  const menuItems = [
+    { text: 'Gerenciar Vendas', path: '/sales' },
+    { text: 'Estoque', path: '/stock' },
+    { text: 'Clientes', path: '/clients' }
+  ];
+
+  const goTo = (path: string) => {
+    history.push(path);
+  };
+
   return (
     <div>
       <AppBar title="CEASA" backButton={false} />
+
+      <List>
+        {menuItems.map((item) => (
+          <ListItem button onClick={() => goTo(item.path)}>
+            <ListItemText primary={item.text} />
+
+            <IconButton>
+              <ChevronRightIcon />
+            </IconButton>
+          </ListItem>
+        ))}
+      </List>
     </div>
   );
 };

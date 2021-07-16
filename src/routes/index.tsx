@@ -26,6 +26,10 @@ import ManageFieldPage from '@pages/fields/manage';
 import NewHarvestPage from '@pages/harvests/new.page';
 import EditHarvestPage from '@pages/harvests/edit.page';
 
+import ClientsPage from '@pages/clients/index.page';
+import NewClientPage from '@pages/clients/new.page';
+import EditClientPage from '@pages/clients/edit.page';
+
 const Routes: FC = () => {
   return (
     <Switch>
@@ -51,6 +55,10 @@ const Routes: FC = () => {
 
       <Route path="/fields/:fieldId/harvests/new" component={NewHarvestPage} />
       <Route path="/harvests/edit/:id/" component={EditHarvestPage} />
+
+      <Route exact path="/clients" component={ClientsPage} />
+      <Route path="/clients/new" component={NewClientPage} />
+      <Route path="/clients/edit/:id" component={EditClientPage} />
 
       <Route path="/" component={MainPage} />
     </Switch>
