@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect, MouseEvent } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSnackbar } from '@hooks/useSnackbar';
 import { alertDialog } from '@hooks/useAlertDialog';
@@ -75,7 +75,7 @@ const UnitsList: FC = () => {
     setMenuAnchor(null);
   };
 
-  const handleMenuClick = (e: MouseEvent<HTMLButtonElement>, id: string) => {
+  const handleMenuClick = (e: any, id: string) => {
     setMenuAnchor(e.currentTarget);
     setSelectedId(id);
   };
@@ -84,7 +84,7 @@ const UnitsList: FC = () => {
     setContextMenu({ mouseX: null, mouseY: null });
   };
 
-  const handleContextMenu = (e: MouseEvent, id: string) => {
+  const handleContextMenu = (e: any, id: string) => {
     e.preventDefault();
     setContextMenu({ mouseX: e.clientX - 2, mouseY: e.clientY - 4 });
     setSelectedId(id);

@@ -7,32 +7,36 @@ import AddIcon from '@material-ui/icons/Add';
 
 import AppBar from '@components/base/AppBar';
 import Fab from '@components/base/Fab';
-import UnitsList from './_components/CultivationsList';
+import SalesList from './_components/SalesList';
 
-const CultivationsPage: FC = () => {
+const SalesPage: FC = () => {
   const history = useHistory();
-
-  const newUnit = () => {
-    history.push('/cultivations/new');
-  };
 
   const goBack = () => {
     history.goBack();
-  }
+  };
+
+  const newSale = () => {
+    history.push('/sales/new');
+  };
 
   return (
     <div>
-      <AppBar title="Culturas" goBack={goBack} />
+      <AppBar
+        title="Vendas"
+        backButton
+        goBack={goBack}
+      />
 
       <Box mt={6}>
-        <UnitsList />
+        <SalesList />
       </Box>
 
-      <Fab bottom={8} color="primary" onClick={newUnit}>
+      <Fab bottom={8} color="primary" onClick={newSale}>
         <AddIcon />
       </Fab>
     </div>
   );
 };
 
-export default CultivationsPage;
+export default SalesPage;

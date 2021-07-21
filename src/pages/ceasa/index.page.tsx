@@ -5,6 +5,9 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import IconButton from '@material-ui/core/IconButton';
+import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
 
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
@@ -27,9 +30,17 @@ const CeasaPage: FC = () => {
     <div>
       <AppBar title="CEASA" backButton={false} />
 
+      <Box pb={3} px={2}>
+        <Typography>
+          Módulo da CEASA.
+        </Typography>
+      </Box>
+
+      <Divider />
+
       <List>
         {menuItems.map((item) => (
-          <ListItem button onClick={() => goTo(item.path)}>
+          <ListItem key={item.text} button onClick={() => goTo(item.path)}>
             <ListItemText primary={item.text} />
 
             <IconButton>

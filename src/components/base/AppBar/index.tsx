@@ -1,4 +1,4 @@
-import React, { FC, useState, MouseEvent } from 'react';
+import React, { FC, useState } from 'react';
 
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import MaterialAppBar from '@material-ui/core/AppBar';
@@ -21,14 +21,15 @@ interface AppBarProps {
   backButton?: boolean;
   menuButton?: boolean;
   moreOptions?: any;
+  extra?: any;
   goBack?(): void;
   onMenuClick?(): void;
 }
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
   toolbar: {
-    paddingLeft: theme.spacing(0),
-    paddingRight: theme.spacing(0)
+    paddingLeft: 0,
+    paddingRight: 0
   },
   title: {
     overflow: 'hidden',
@@ -46,6 +47,7 @@ const AppBar: FC<AppBarProps> = (props) => {
     backButton = true,
     menuButton = false,
     moreOptions,
+    extra,
     goBack = () => null,
     onMenuClick = () => null
   } = props;
@@ -58,7 +60,7 @@ const AppBar: FC<AppBarProps> = (props) => {
     setMenuAnchor(null);
   }
 
-  const handleMoreClick = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleMoreClick = (e: any) => {
     setMenuAnchor(e.currentTarget);
   }
 
@@ -87,6 +89,12 @@ const AppBar: FC<AppBarProps> = (props) => {
               <Typography variant="caption">{subTitle}</Typography>
             )}
           </FlexBox>
+
+          {extra && (
+            <FlexBox style={{ marginRight: 8 }}>
+              {extra}
+            </FlexBox>
+          )}
 
           {moreOptions && (
             <>

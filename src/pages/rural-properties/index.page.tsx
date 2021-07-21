@@ -5,7 +5,7 @@ import Box from '@material-ui/core/Box';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 
-import AddOutlined from '@material-ui/icons/AddOutlined';
+import AddIcon from '@material-ui/icons/Add';
 
 import AppBar from '@components/base/AppBar';
 import Fab from '@components/base/Fab';
@@ -36,7 +36,7 @@ const RuralPropertiesPage: FC = () => {
       <RuralPropertiesList />
 
       <Fab bottom={68} color="primary" onClick={newRuralProperty}>
-        <AddOutlined />
+        <AddIcon />
       </Fab>
     </div>
   );

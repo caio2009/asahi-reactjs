@@ -30,6 +30,12 @@ import ClientsPage from '@pages/clients/index.page';
 import NewClientPage from '@pages/clients/new.page';
 import EditClientPage from '@pages/clients/edit.page';
 
+import StockPage from '@pages/stock/index.page';
+
+import SalesPage from '@pages/sales/index.page';
+import NewSalePage from '@pages/sales/new.page';
+import EditSalePage from '@pages/sales/edit.page';
+
 const Routes: FC = () => {
   return (
     <Switch>
@@ -59,6 +65,12 @@ const Routes: FC = () => {
       <Route exact path="/clients" component={ClientsPage} />
       <Route path="/clients/new" component={NewClientPage} />
       <Route path="/clients/edit/:id" component={EditClientPage} />
+
+      <Route path="/stock" component={StockPage} />
+
+      <Route exact path="/sales" component={SalesPage} />
+      <Route path="/sales/new" component={NewSalePage} />
+      <Route path="/sales/edit/:id" component={EditSalePage} />
 
       <Route path="/" component={MainPage} />
     </Switch>

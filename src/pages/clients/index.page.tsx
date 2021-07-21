@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import Box from '@material-ui/core/Box';
 
-import AddOutlined from '@material-ui/icons/AddOutlined';
+import AddIcon from '@material-ui/icons/Add';
 
 import AppBar from '@components/base/AppBar';
 import Fab from '@components/base/Fab';
@@ -29,7 +29,7 @@ const ClientsPage: FC = () => {
       </Box>
 
       <Fab bottom={8} color="primary" onClick={newUnit}>
-        <AddOutlined />
+        <AddIcon />
       </Fab>
     </div>
   );

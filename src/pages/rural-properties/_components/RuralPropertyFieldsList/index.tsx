@@ -1,4 +1,4 @@
-import React, { FC, useState, useCallback, useEffect, MouseEvent } from 'react';
+import React, { FC, useState, useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSnackbar } from '@hooks/useSnackbar';
 import { alertDialog } from '@hooks/useAlertDialog';
@@ -87,7 +87,7 @@ const RuralPropertyFieldsList: FC<RuralPropertyFieldsListProps> = (props) => {
     setMenuAnchor(null);
   };
 
-  const handleMenuClick = (e: MouseEvent<HTMLButtonElement>, id: string) => {
+  const handleMenuClick = (e: any, id: string) => {
     setMenuAnchor(e.currentTarget);
     setSelectedId(id);
   };
@@ -96,7 +96,7 @@ const RuralPropertyFieldsList: FC<RuralPropertyFieldsListProps> = (props) => {
     setContextMenu({ mouseX: null, mouseY: null });
   };
 
-  const handleContextMenu = (e: MouseEvent, id: string) => {
+  const handleContextMenu = (e: any, id: string) => {
     e.preventDefault();
     setContextMenu({ mouseX: e.clientX - 2, mouseY: e.clientY - 4 });
     setSelectedId(id);

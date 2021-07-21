@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import Add from '@material-ui/icons/Add';
+import AddIcon from '@material-ui/icons/Add';
 
 import RuralPropertyFieldsList from '../_components/RuralPropertyFieldsList';
 import Fab from '@components/base/Fab';
@@ -24,7 +24,7 @@ const RuralPropertyFieldsPage: FC<RuralPropertyFieldsPageProps> = (props) => {
       <RuralPropertyFieldsList ruralPropertyId={ruralPropertyId} />
 
       <Fab bottom={8} color="primary" onClick={newField}>
-        <Add />
+        <AddIcon />
       </Fab>
     </div>
   );

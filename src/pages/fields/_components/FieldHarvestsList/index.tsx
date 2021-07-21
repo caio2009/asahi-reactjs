@@ -1,4 +1,4 @@
-import React, { FC, useState, useCallback, useEffect, MouseEvent } from 'react';
+import React, { FC, useState, useCallback, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useSnackbar } from '@hooks/useSnackbar';
 import { alertDialog } from '@hooks/useAlertDialog';
@@ -109,7 +109,7 @@ const FieldHarvestsList: FC<FieldHarvestsListProps> = (props) => {
     setMenuAnchor(null);
   };
 
-  const handleMenuClick = (e: MouseEvent<HTMLButtonElement>, id: string, date: Date) => {
+  const handleMenuClick = (e: any, id: string, date: Date) => {
     setMenuAnchor(e.currentTarget);
     setSelectedId(id);
     setSelectedDate(date);
@@ -119,7 +119,7 @@ const FieldHarvestsList: FC<FieldHarvestsListProps> = (props) => {
     setContextMenu({ mouseX: null, mouseY: null });
   };
 
-  const handleContextMenu = (e: MouseEvent, id: string, date: Date) => {
+  const handleContextMenu = (e: any, id: string, date: Date) => {
     e.preventDefault();
     setContextMenu({ mouseX: e.clientX - 2, mouseY: e.clientY - 4 });
     setSelectedId(id);
@@ -137,9 +137,9 @@ const FieldHarvestsList: FC<FieldHarvestsListProps> = (props) => {
           <React.Fragment key={index}>
             <li>
               <ul>
-                <ListSubheader>{
-                  formatDate(new Date(mappedHarvest.date), 'dd/MM/yyyy')
-                }</ListSubheader>
+                <ListSubheader>
+                  {formatDate(new Date(mappedHarvest.date), 'dd/MM/yyyy')}
+                </ListSubheader>
                 {mappedHarvest.harvests.map((harvest) => (
                   <ListItem
                     key={harvest.id}
@@ -165,10 +165,12 @@ const FieldHarvestsList: FC<FieldHarvestsListProps> = (props) => {
                 ))}
               </ul>
             </li>
-            {index < harvests.length - 1 && <>
-              <br />
-              <Divider />
-            </>}
+            {index < harvests.length - 1 && (
+              <>
+                <br />
+                <Divider />
+              </>
+            )}
           </React.Fragment>
         ))}
       </List>
