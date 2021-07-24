@@ -64,7 +64,7 @@ type Sale = {
 };
 
 const deliveryStatus: { [key: string]: string } = {
-  completed: 'Finalizado',
+  dispatched: 'Despachado',
   waiting: 'Esperando'
 };
 

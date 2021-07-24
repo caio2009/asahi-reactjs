@@ -91,6 +91,7 @@ const SalesSearchBar: FC<SalesSearchBarProps> = (props) => {
         </IconButton>
 
         <Input
+          type="search"
           value={_value}
           inputRef={inputRef}
           autoFocus

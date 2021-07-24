@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 const deliveryStatus: { [key: string]: string } = {
-  completed: 'Finalizado',
+  dispatched: 'Despachado',
   waiting: 'Esperando'
 };
 

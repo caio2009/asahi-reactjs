@@ -351,7 +351,7 @@ const SaleForm: FC<SaleFormProps> = (props) => {
                       value={value}
                       onChange={onChange}
                     >
-                      <MenuItem value="completed">Finalizado</MenuItem>
+                      <MenuItem value="dispatched">Despachado</MenuItem>
                       <MenuItem value="waiting">Esperando</MenuItem>
                     </Select>
                     {error && <FormHelperText>{error.message}</FormHelperText>}
