@@ -29,6 +29,7 @@ import { format as formatDate } from 'date-fns';
 type SaleFormProps = {
   saleId?: string;
   initialValues?: InitialValuesData;
+  onEdited?(): void;
 };
 
 type Inputs = {
@@ -82,7 +83,7 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 const SaleForm: FC<SaleFormProps> = (props) => {
-  const { saleId, initialValues } = props;
+  const { saleId, initialValues, onEdited } = props;
 
   const history = useHistory();
   const { control, handleSubmit, register, setValue, getValues, formState: { errors } } = useForm<Inputs>();
@@ -102,6 +103,11 @@ const SaleForm: FC<SaleFormProps> = (props) => {
       iv.clientName && setValue('clientName', iv.clientName);
       iv.paymentStatus && setValue('paymentStatus', iv.paymentStatus);
       iv.deliveryStatus && setValue('deliveryStatus', iv.deliveryStatus);
+
+      iv.saleItems.forEach((item) => {
+        setQuantity(item.harvest.id, item.quantity);
+        setPrice(item.harvest.id, item.unitPrice);
+      });
     }
   }, [initialValues, setValue]);
 
@@ -125,7 +131,12 @@ const SaleForm: FC<SaleFormProps> = (props) => {
       });
   };
 
-  const setQuantity = (key: string, value: string) => {
+  const setQuantity = (key: string, value: string | number) => {
+    if (typeof value === 'number') {
+      setQuantities((prev) => ({ ...prev, [key]: value }));
+      return;
+    }
+
     setQuantities((prev) => ({ ...prev, [key]: Number(value) }));
   };
 
@@ -135,7 +146,12 @@ const SaleForm: FC<SaleFormProps> = (props) => {
     return quantity || 0;
   };
 
-  const setPrice = (key: string, value: string) => {
+  const setPrice = (key: string, value: string | number) => {
+    if (typeof value === 'number') {
+      setPrices((prev) => ({ ...prev, [key]: value }));
+      return;
+    }
+
     setPrices((prev) => ({ ...prev, [key]: Number(value.replace(',', '.')) }));
   }
 
@@ -146,11 +162,14 @@ const SaleForm: FC<SaleFormProps> = (props) => {
       if (quantities[key] > 0) {
         saleItems.push({
           quantity: quantities[key],
-          unitPrice: prices[key],
+          unitPrice: prices[key] || 0,
           harvestId: key
         });
       }
     }
+
+    // console.log(saleItems);
+    // return;
 
     const clientId = clients.find((client) => client.name === data.clientName)?.id;
 
@@ -166,7 +185,8 @@ const SaleForm: FC<SaleFormProps> = (props) => {
       api.put(`sales/${saleId}`, payload)
         .then(() => {
           addSnackbar('Venda editada com sucesso!');
-          history.goBack();
+          // history.goBack();
+          if (onEdited) onEdited();
         })
         .catch((err) => {
           handleAxiosError(err, addSnackbar);
@@ -225,8 +245,7 @@ const SaleForm: FC<SaleFormProps> = (props) => {
   const getSaleItemQuantity = useCallback((harvestId: string) => {
     if (!initialValues) return 0;
 
-    const saleItem = initialValues.saleItems.find((saleItem) => saleItem.harvest.id === harvestId);
-
+    const saleItem = initialValues.saleItems.find((item) => item.harvest.id === harvestId);
     if (!saleItem) return 0;
 
     return saleItem.quantity;
@@ -307,7 +326,7 @@ const SaleForm: FC<SaleFormProps> = (props) => {
                       onChange={onChange}
                     >
                       <MenuItem value="paid">Pago</MenuItem>
-                      <MenuItem value="pending">Pendente</MenuItem>
+                      <MenuItem value="pending">Não Pago</MenuItem>
                     </Select>
                     {error && <FormHelperText>{error.message}</FormHelperText>}
                   </FormControl>

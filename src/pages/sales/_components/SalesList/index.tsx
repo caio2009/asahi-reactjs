@@ -1,5 +1,4 @@
-import React, { FC, useState, useCallback, useEffect, useRef, useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { FC, useState, useCallback, useEffect, useRef, useMemo, SetStateAction } from 'react';
 import { useSnackbar } from '@hooks/useSnackbar';
 import { alertDialog } from '@hooks/useAlertDialog';
 
@@ -19,10 +18,22 @@ import MoreVert from '@material-ui/icons/MoreVert';
 
 import FlexBox from '@components/base/FlexBox';
 import ProgressDialog from '@components/dialog/ProgressDialog';
+import SaleDetailsDialog from '../SaleDetailsDialog';
+import EditSaleDialog from '../EditSaleDialog';
 
 import api from '@services/api';
 import handleAxiosError from '@utils/handleAxiosError';
 import { format as formatDate } from 'date-fns';
+
+type SalesListProps = {
+  sales: Sale[];
+  setSales(value: SetStateAction<Sale[]>): void;
+  page: number;
+  setPage(value: SetStateAction<number>): void;
+  filter?: string;
+  query?: string;
+  onSaleEdited(): void;
+};
 
 type Sale = {
   id: string;
@@ -41,8 +52,7 @@ type MemoSales = {
 const useStyles = makeStyles((theme: Theme) => createStyles({
   paper: {
     flexGrow: 1,
-    border: 'none',
-    // borderRadius: 0
+    border: 'none'
   },
   listItem: {
     padding: 0
@@ -56,37 +66,61 @@ const deliveryStatus: { [key: string]: string } = {
 
 const paymentStatus: { [key: string]: string } = {
   paid: 'Pago',
-  pending: 'Pendente'
+  pending: 'Não Pago'
 };
 
-const SalesList: FC = () => {
-  const history = useHistory();
+const SalesList: FC<SalesListProps> = (props) => {
+  const { sales, setSales, page, setPage, filter, query, onSaleEdited } = props;
+
   const { addSnackbar } = useSnackbar();
   const classes = useStyles();
 
   const observer = useRef<any>();
 
-  const [sales, setSales] = useState<Sale[]>([]);
+  // const [sales, setSales] = useState<Sale[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
+  // const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
 
-  const [expandCollapse, setExpandCollapse] = useState<string[]>([]);
   const [menuAnchor, setMenuAnchor] = useState<HTMLButtonElement | null>(null);
   const [contextMenu, setContextMenu] = useState<any>({ mouseX: null, mouseY: null });
   const [deleteProgress, setDeleteProgress] = useState(false);
+  const [saleDetailsDialog, setSaleDetailsDialog] = useState(false);
+  const [editSaleDialog, setEditSaleDialog] = useState(false);
 
   const getSales = useCallback(() => {
-    api.get('sales/pages', { params: { page } })
-      .then((res) => {
-        setSales((prev) => [...prev, ...res.data]);
-        setHasMore(res.data.length > 0);
-      })
-      .catch((err) => {
-        handleAxiosError(err, addSnackbar);
-      });
+    if (!query) {
+      api.get('sales/pages', { params: { page } })
+        .then((res) => {
+          setSales((prev: Sale[]) => [...prev, ...res.data]);
+          setHasMore(res.data.length > 0);
+        })
+        .catch((err) => {
+          handleAxiosError(err, addSnackbar);
+        });
+    }
     // eslint-disable-next-line
-  }, [page]);
+  }, [page, query]);
+
+  const searchSalesByClientName = useCallback(() => {
+    if (query) {
+      api.get('sales/search', {
+        params: {
+          filter,
+          clientName: query,
+          page
+        }
+      })
+        .then((res) => {
+          setSales((prev: Sale[]) => [...prev, ...res.data]);
+          setHasMore(res.data.length > 0);
+        })
+        .catch((err) => {
+          handleAxiosError(err, addSnackbar);
+        });
+    }
+    // eslint-disable-next-line
+  }, [query, page]);
 
   const lastItemElementRef = useCallback((node) => {
     if (observer.current) observer.current.disconnect();
@@ -98,10 +132,12 @@ const SalesList: FC = () => {
     });
 
     if (node) observer.current.observe(node);
-  }, [hasMore]);
+  }, [hasMore, setPage]);
 
   const editSale = () => {
-    history.push(`/sales/edit/${selectedId}`);
+    setEditSaleDialog(true);
+    setMenuAnchor(null);
+    setContextMenu({ mouseX: null, mouseY: null });
   };
 
   const deleteSale = () => {
@@ -114,23 +150,13 @@ const SalesList: FC = () => {
         api.delete(`/sales/${selectedId}`)
           .then(() => {
             addSnackbar('Venda apagada com sucesso!');
-            setSales(prev => prev.filter(sale => sale.id !== selectedId));
+            setSales((prev: Sale[]) => prev.filter((sale: Sale) => sale.id !== selectedId));
           })
           .catch((err) => handleAxiosError(err, addSnackbar))
           .finally(() => setDeleteProgress(false));
       }
     });
   };
-
-  const handleExpandCollapse = (id: string) => {
-    if (expandCollapse.includes(id)) {
-      setExpandCollapse((prev) => prev.filter((el) => el !== id));
-      return;
-    }
-
-    setExpandCollapse((prev) => [...prev, id]);
-  };
-
   const closeMenu = () => {
     setMenuAnchor(null);
   };
@@ -151,6 +177,19 @@ const SalesList: FC = () => {
     setSelectedId(id);
   };
 
+  const handleListItemClick = (id: string) => {
+    setSelectedId(id);
+    setSaleDetailsDialog(true);
+  };
+
+  const handleSaleDeleteFromDialog = (id: string) => {
+    setSales((prev: Sale[]) => prev.filter((sale: Sale) => sale.id !== selectedId));
+  };
+
+  const handleSaleEdited = () => {
+    onSaleEdited();
+  };
+
   const memoSales = useMemo(() => {
     return sales.reduce((acc, curr) => {
       const date = formatDate(new Date(curr.date), 'dd/MM/yyyy');
@@ -168,7 +207,18 @@ const SalesList: FC = () => {
 
   useEffect(() => {
     getSales();
-  }, [getSales, page]);
+  }, [getSales]);
+
+  useEffect(() => {
+    if (filter === 'clientName') {
+      searchSalesByClientName();
+    }
+  }, [filter, searchSalesByClientName]);
+
+  // useEffect(() => {
+  //   setPage(1);
+  //   setSales([]);
+  // }, [query]);
 
   return (
     <div>
@@ -180,18 +230,18 @@ const SalesList: FC = () => {
                 <ListSubheader>
                   {date}
                 </ListSubheader>
-                {memoSales[date].map((sale, saleIndex) => (
+                {memoSales[date].map((sale: Sale, saleIndex: number) => (
                   <React.Fragment key={sale.id}>
                     <ListItem
                       ref={dateIndex === Object.keys(memoSales).length - 1 && saleIndex === memoSales[date].length - 1 ? lastItemElementRef : null}
                       button
                       className={classes.listItem}
+                      onClick={() => handleListItemClick(sale.id)}
                     >
                       <Paper
                         className={classes.paper}
                         variant="outlined"
                         onContextMenu={(e) => handleContextMenu(e, sale.id)}
-                        onClick={() => handleExpandCollapse(sale.id)}
                       >
                         <FlexBox items="flex-start" content="space-between">
                           <Box m={2} style={{ flexGrow: 1 }}>
@@ -244,9 +294,6 @@ const SalesList: FC = () => {
         open={!!menuAnchor}
         onClose={closeMenu}
       >
-        {/* <MenuItem dense onClick={() => manageSale()}>
-          Gerenciar
-        </MenuItem> */}
         <MenuItem dense onClick={editSale}>
           Editar
         </MenuItem>
@@ -266,9 +313,6 @@ const SalesList: FC = () => {
             : undefined
         }
       >
-        {/* <MenuItem dense onClick={() => manageSale()}>
-          Gerenciar
-        </MenuItem> */}
         <MenuItem dense onClick={editSale}>
           Editar
         </MenuItem>
@@ -279,8 +323,23 @@ const SalesList: FC = () => {
 
       <ProgressDialog
         open={deleteProgress}
-        text="Aguarde. Apagando propriedade rural."
+        text="Aguarde. Apagando venda."
         onClose={() => setDeleteProgress(false)}
+      />
+
+      <SaleDetailsDialog
+        saleId={selectedId}
+        open={saleDetailsDialog}
+        onClose={() => setSaleDetailsDialog(false)}
+        onEdit={editSale}
+        onDelete={handleSaleDeleteFromDialog}
+      />
+
+      <EditSaleDialog
+        saleId={selectedId}
+        open={editSaleDialog}
+        onClose={() => setEditSaleDialog(false)}
+        onEdited={handleSaleEdited}
       />
     </div>
   );
