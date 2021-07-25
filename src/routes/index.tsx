@@ -35,6 +35,8 @@ import StockPage from '@pages/stock/index.page';
 import SalesPage from '@pages/sales/index.page';
 import NewSalePage from '@pages/sales/new.page';
 import EditSalePage from '@pages/sales/edit.page';
+import DispatchSalesPage from '@pages/sales/dispatch/index.page';
+
 
 const Routes: FC = () => {
   return (
@@ -71,6 +73,9 @@ const Routes: FC = () => {
       <Route exact path="/sales" component={SalesPage} />
       <Route path="/sales/new" component={NewSalePage} />
       <Route path="/sales/edit/:id" component={EditSalePage} />
+      
+      <Route exact path="/sales/dispatch" component={DispatchSalesPage} />
+
 
       <Route path="/" component={MainPage} />
     </Switch>

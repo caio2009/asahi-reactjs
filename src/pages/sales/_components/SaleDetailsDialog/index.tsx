@@ -25,9 +25,10 @@ import { format as formatDate } from 'date-fns';
 type SaleDetailsDialogProps = {
   open: boolean;
   saleId?: string | null;
+  editable?: boolean;
   onClose(): void;
-  onEdit(): void;
-  onDelete(id: string): void;
+  onEdit?(): void;
+  onDelete?(id: string): void;
 };
 
 type Sale = {
@@ -74,7 +75,14 @@ const paymentStatus: { [key: string]: string } = {
 };
 
 const SaleDetailsDialog: FC<SaleDetailsDialogProps> = (props) => {
-  const { open, saleId, onClose, onEdit, onDelete } = props;
+  const { 
+    open, 
+    saleId, 
+    editable = true, 
+    onClose, 
+    onEdit, 
+    onDelete 
+  } = props;
 
   const history = useHistory();
   const { path } = useRouteMatch();
@@ -103,7 +111,7 @@ const SaleDetailsDialog: FC<SaleDetailsDialogProps> = (props) => {
 
   const editSale = () => {
     onClose();
-    onEdit();
+    if (onEdit) onEdit();
   };
 
   const deleteSale = () => {
@@ -115,7 +123,7 @@ const SaleDetailsDialog: FC<SaleDetailsDialogProps> = (props) => {
           .then(() => {
             addSnackbar('Venda apagada com sucesso!');
             onClose();
-            if (saleId) onDelete(saleId);
+            if (onDelete && saleId) onDelete(saleId);
           })
           .catch((err) => handleAxiosError(err, addSnackbar))
           .finally(() => setDeleteProgress(false));
@@ -155,7 +163,7 @@ const SaleDetailsDialog: FC<SaleDetailsDialogProps> = (props) => {
         title="Detahes da Venda"
         backButton
         goBack={goBack}
-        moreOptions={[
+        moreOptions={editable && [
           <MenuItem dense key={0} onClick={editSale}>
             Editar
           </MenuItem>,

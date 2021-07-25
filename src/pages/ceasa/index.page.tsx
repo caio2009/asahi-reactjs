@@ -18,6 +18,7 @@ const CeasaPage: FC = () => {
 
   const menuItems = [
     { text: 'Gerenciar Vendas', path: '/sales' },
+    { text: 'Expedição', path: '/sales/dispatch' },
     { text: 'Estoque', path: '/stock' },
     { text: 'Clientes', path: '/clients' }
   ];

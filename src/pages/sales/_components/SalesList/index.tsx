@@ -157,6 +157,7 @@ const SalesList: FC<SalesListProps> = (props) => {
       }
     });
   };
+  
   const closeMenu = () => {
     setMenuAnchor(null);
   };
@@ -215,11 +216,6 @@ const SalesList: FC<SalesListProps> = (props) => {
     }
   }, [filter, searchSalesByClientName]);
 
-  // useEffect(() => {
-  //   setPage(1);
-  //   setSales([]);
-  // }, [query]);
-
   return (
     <div>
       <List subheader={<li />}>
@@ -251,12 +247,12 @@ const SalesList: FC<SalesListProps> = (props) => {
                             </FlexBox>
 
                             <Typography variant="body2">
-                              Cliente: <Typography component="span" variant="body2" color="primary">{sale.clientName}</Typography>
+                              Cliente: <Typography component="span" variant="body2">{sale.clientName}</Typography>
                             </Typography>
 
                             <FlexBox content="space-between">
                               <Typography variant="body2">
-                                Total: <Typography component="span" variant="body2" color="primary">{sale.totalValue}</Typography>
+                                Total: <Typography component="span" variant="body2">{sale.totalValue}</Typography>
                               </Typography>
                               <Typography variant="body2" color="textSecondary">{paymentStatus[sale.paymentStatus]}</Typography>
                             </FlexBox>
