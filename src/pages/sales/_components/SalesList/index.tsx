@@ -191,6 +191,13 @@ const SalesList: FC<SalesListProps> = (props) => {
     onSaleEdited();
   };
 
+  const handleSalePaymentStatusChange = (sale: Sale) => {
+    setSales((prev: Sale[]) => prev.map((el: Sale) => {
+      if (el.id === sale.id) return sale;
+      return el;
+    }));
+  }
+
   const memoSales = useMemo(() => {
     return sales.reduce((acc, curr) => {
       const date = formatDate(new Date(curr.date), 'dd/MM/yyyy');
@@ -329,6 +336,7 @@ const SalesList: FC<SalesListProps> = (props) => {
         onClose={() => setSaleDetailsDialog(false)}
         onEdit={editSale}
         onDelete={handleSaleDeleteFromDialog}
+        onPaymenStatusChange={handleSalePaymentStatusChange}
       />
 
       <EditSaleDialog

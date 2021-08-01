@@ -1,6 +1,6 @@
 const handleAxiosError = (err: any, addSnackbar: Function) => {
-  console.log(err.response.data);
   if (err.response) {
+    // console.log(err.response.data);
     addSnackbar(err.response.data.message, {
       variant: 'error'
     });

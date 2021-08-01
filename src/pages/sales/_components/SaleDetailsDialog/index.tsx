@@ -14,9 +14,11 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import MenuItem from '@material-ui/core/MenuItem';
+import Button from '@material-ui/core/Button';
 
 import AppBar from '@components/base/AppBar';
 import ProgressDialog from '@components/dialog/ProgressDialog';
+import FlexBox from '@components/base/FlexBox';
 
 import api from '@services/api';
 import handleAxiosError from '@utils/handleAxiosError';
@@ -29,6 +31,7 @@ type SaleDetailsDialogProps = {
   onClose(): void;
   onEdit?(): void;
   onDelete?(id: string): void;
+  onPaymenStatusChange?(sale: Sale): void;
 };
 
 type Sale = {
@@ -75,13 +78,14 @@ const paymentStatus: { [key: string]: string } = {
 };
 
 const SaleDetailsDialog: FC<SaleDetailsDialogProps> = (props) => {
-  const { 
-    open, 
-    saleId, 
-    editable = true, 
-    onClose, 
-    onEdit, 
-    onDelete 
+  const {
+    open,
+    saleId,
+    editable = true,
+    onClose,
+    onEdit,
+    onDelete,
+    onPaymenStatusChange
   } = props;
 
   const history = useHistory();
@@ -131,6 +135,25 @@ const SaleDetailsDialog: FC<SaleDetailsDialogProps> = (props) => {
     });
   };
 
+  const handlePaymentStatusChange = () => {
+    if (sale) {
+      const paymentStatus = sale.paymentStatus === 'paid' ? 'pending' : 'paid';
+
+      api.patch(`sales/${sale.id}/payment-status`, { paymentStatus })
+        .then(() => {
+          setSale((prev) => prev ? ({
+            ...prev,
+            paymentStatus
+          }) : null);
+
+          if (onPaymenStatusChange) onPaymenStatusChange({...sale, paymentStatus});
+        })
+        .catch((err) => {
+          handleAxiosError(err, addSnackbar);
+        });
+    }
+  }
+
   useEffect(() => {
     if (open) {
       const unblock = history.block((location, action) => {
@@ -174,6 +197,18 @@ const SaleDetailsDialog: FC<SaleDetailsDialogProps> = (props) => {
       />
 
       <Box mt={8} mb={4}>
+        <FlexBox>
+          <Button
+            variant="outlined"
+            color={sale?.paymentStatus === 'paid' ? 'secondary' : 'primary'}
+            onClick={handlePaymentStatusChange}
+          >
+            {sale?.paymentStatus === 'paid' ? 'Mudar para não pago' : 'Mudar para pago'}
+          </Button>
+        </FlexBox>
+
+        <br />
+
         <Box mx={2}>
           <Typography variant="h6">Dados da Venda</Typography>
         </Box>
