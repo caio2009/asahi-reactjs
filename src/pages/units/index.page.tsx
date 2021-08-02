@@ -24,7 +24,7 @@ const UnitsPage: FC = () => {
     <div>
       <AppBar title="Unidades" goBack={goBack} />
 
-      <Box mt={6}>
+      <Box mt={8}>
         <UnitsList />
       </Box>
 

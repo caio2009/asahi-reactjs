@@ -21,7 +21,7 @@ const StockPage: FC = () => {
         goBack={goBack}
       />
 
-      <Box mt={6}>
+      <Box mt={8}>
         <StockItemsList />
       </Box>
     </div>

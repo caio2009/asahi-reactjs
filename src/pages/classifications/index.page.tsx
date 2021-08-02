@@ -24,7 +24,7 @@ const ClassificationsPage: FC = () => {
     <div>
       <AppBar title="Classificações" goBack={goBack} />
 
-      <Box mt={6}>
+      <Box mt={8}>
         <UnitsList />
       </Box>
 

@@ -24,7 +24,7 @@ const CultivationsPage: FC = () => {
     <div>
       <AppBar title="Culturas" goBack={goBack} />
 
-      <Box mt={6}>
+      <Box mt={8}>
         <UnitsList />
       </Box>
 

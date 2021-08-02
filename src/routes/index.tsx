@@ -1,5 +1,6 @@
-import React, { FC } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import React, { FC, useContext } from 'react';
+import { Switch, Route as ReactDOMRoute, RouteProps as ReactDOMRouteProps, Redirect } from 'react-router-dom';
+import { AuthContext } from '@contexts/AuthContext';
 
 import MainPage from '@pages/main/index.page';
 
@@ -37,47 +38,81 @@ import NewSalePage from '@pages/sales/new.page';
 import EditSalePage from '@pages/sales/edit.page';
 import DispatchSalesPage from '@pages/sales/dispatch/index.page';
 
+import SignInPage from '@pages/signin';
+
+interface RouteProps extends ReactDOMRouteProps {
+  isPrivate?: boolean;
+  component: React.ComponentType;
+}
+
+const Route: React.FC<RouteProps> = ({
+  isPrivate = false,
+  component: Component,
+  ...rest
+}) => {
+  const { isAuthenticated } = useContext(AuthContext);
+
+  return (
+    <ReactDOMRoute
+      {...rest}
+      render={({ location }) => {
+        return isPrivate === !!isAuthenticated ? (
+          <Component />
+        ) : (
+          <Redirect
+            to={{
+              pathname: isPrivate ? '/signin' : '/',
+              state: { from: location }
+            }}
+          />
+        )
+      }}
+    />
+  )
+};
 
 const Routes: FC = () => {
   return (
     <Switch>
-      <Route path="/rural-properties/new" component={NewRuralPropertyPage} />
-      <Route path="/rural-properties/edit/:id" component={EditRuralPropertyPage} />
-      <Route path="/rural-properties/manage/:id" component={ManageRuralPropertyPage} />
+      <Route path="/signin" component={SignInPage} />
 
-      <Route exact path="/units" component={UnitsPage} />
-      <Route path="/units/new" component={NewUnitPage} />
-      <Route path="/units/edit/:id" component={EditUnitPage} />
+      <Route isPrivate path="/rural-properties/new" component={NewRuralPropertyPage} />
+      <Route isPrivate path="/rural-properties/edit/:id" component={EditRuralPropertyPage} />
+      <Route isPrivate path="/rural-properties/manage/:id" component={ManageRuralPropertyPage} />
 
-      <Route exact path="/classifications" component={ClassificationsPage} />
-      <Route path="/classifications/new" component={NewClassificationPage} />
-      <Route path="/classifications/edit/:id" component={EditClassificationPage} />
+      <Route isPrivate exact path="/units" component={UnitsPage} />
+      <Route isPrivate path="/units/new" component={NewUnitPage} />
+      <Route isPrivate path="/units/edit/:id" component={EditUnitPage} />
 
-      <Route exact path="/cultivations" component={CultivationsPage} />
-      <Route path="/cultivations/new" component={NewCultivationPage} />
-      <Route path="/cultivations/edit/:id" component={EditCultivationPage} />
+      <Route isPrivate exact path="/classifications" component={ClassificationsPage} />
+      <Route isPrivate path="/classifications/new" component={NewClassificationPage} />
+      <Route isPrivate path="/classifications/edit/:id" component={EditClassificationPage} />
 
-      <Route path="/rural-properties/:ruralPropertyId/fields/new" component={NewFieldPage} />
-      <Route path="/fields/edit/:id" component={EditFieldPage} />
-      <Route path="/fields/manage/:id" component={ManageFieldPage} />
+      <Route isPrivate exact path="/cultivations" component={CultivationsPage} />
+      <Route isPrivate path="/cultivations/new" component={NewCultivationPage} />
+      <Route isPrivate path="/cultivations/edit/:id" component={EditCultivationPage} />
 
-      <Route path="/fields/:fieldId/harvests/new" component={NewHarvestPage} />
-      <Route path="/harvests/edit/:id/" component={EditHarvestPage} />
+      <Route isPrivate path="/rural-properties/:ruralPropertyId/fields/new" component={NewFieldPage} />
+      <Route isPrivate path="/fields/edit/:id" component={EditFieldPage} />
+      <Route isPrivate path="/fields/manage/:id" component={ManageFieldPage} />
 
-      <Route exact path="/clients" component={ClientsPage} />
-      <Route path="/clients/new" component={NewClientPage} />
-      <Route path="/clients/edit/:id" component={EditClientPage} />
+      <Route isPrivate path="/fields/:fieldId/harvests/new" component={NewHarvestPage} />
+      <Route isPrivate path="/harvests/edit/:id/" component={EditHarvestPage} />
 
-      <Route path="/stock" component={StockPage} />
+      <Route isPrivate exact path="/clients" component={ClientsPage} />
+      <Route isPrivate path="/clients/new" component={NewClientPage} />
+      <Route isPrivate path="/clients/edit/:id" component={EditClientPage} />
 
-      <Route exact path="/sales" component={SalesPage} />
-      <Route path="/sales/new" component={NewSalePage} />
-      <Route path="/sales/edit/:id" component={EditSalePage} />
+      <Route isPrivate path="/stock" component={StockPage} />
+
+      <Route isPrivate exact path="/sales" component={SalesPage} />
+      <Route isPrivate path="/sales/new" component={NewSalePage} />
+      <Route isPrivate path="/sales/edit/:id" component={EditSalePage} />
       
-      <Route exact path="/sales/dispatch" component={DispatchSalesPage} />
+      <Route isPrivate exact path="/sales/dispatch" component={DispatchSalesPage} />
 
 
-      <Route path="/" component={MainPage} />
+      <Route isPrivate path="/" component={MainPage} />
     </Switch>
   );
 };

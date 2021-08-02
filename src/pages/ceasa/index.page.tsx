@@ -31,7 +31,7 @@ const CeasaPage: FC = () => {
     <div>
       <AppBar title="CEASA" backButton={false} />
 
-      <Box pb={3} px={2}>
+      <Box pt={2} pb={3} px={2}>
         <Typography>
           Módulo da CEASA.
         </Typography>

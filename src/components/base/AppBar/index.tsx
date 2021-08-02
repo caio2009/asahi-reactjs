@@ -67,7 +67,7 @@ const AppBar: FC<AppBarProps> = (props) => {
   return (
     <HideOnScroll>
       <MaterialAppBar>
-        <Toolbar variant="dense" className={classes.toolbar}>
+        <Toolbar /*variant="dense"*/ className={classes.toolbar}>
           {menuButton && (
             <IconButton onClick={onMenuClick}>
               <MenuIcon htmlColor="#fff" />

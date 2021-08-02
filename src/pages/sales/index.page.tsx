@@ -87,7 +87,7 @@ const SalesPage: FC = () => {
         onClear={handleSearchClear}
       />
 
-      <Box mt={6}>
+      <Box mt={8}>
         <SalesList
           sales={sales}
           setSales={setSales}

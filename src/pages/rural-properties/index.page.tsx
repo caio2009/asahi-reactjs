@@ -22,7 +22,7 @@ const RuralPropertiesPage: FC = () => {
     <div>
       <AppBar title="Propriedades Rurais" backButton={false} />
 
-      <Box mx={2} mb={3}>
+      <Box pt={2} mx={2} mb={3}>
         <Typography>
           Gerencie suas Propriedades Rurais
         </Typography>

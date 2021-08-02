@@ -98,7 +98,7 @@ const ManageRuralPropertyPage: FC = () => {
         ]}
       />
 
-      <Box mt={6}>
+      <Box mt={8}>
         <Paper square>
           <Tabs value={tabValue} onChange={handleTabChange}>
             <Tab value="fields" label="TALHÕES" />

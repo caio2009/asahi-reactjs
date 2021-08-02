@@ -85,7 +85,7 @@ const SalesSearchBar: FC<SalesSearchBarProps> = (props) => {
 
   return open ? (
     <MaterialAppBar elevation={0}>
-      <Toolbar variant="dense" className={classes.toolbar}>
+      <Toolbar className={classes.toolbar}>
         <IconButton onClick={close}>
           <ArrowBackIcon htmlColor="#fff" />
         </IconButton>
