@@ -21,7 +21,7 @@ const DispatchSalesPage: FC = () => {
         goBack={goBack}
       />
 
-      <Box mt={8}>
+      <Box mt={10}>
         <SalesList />
       </Box>
     </div>

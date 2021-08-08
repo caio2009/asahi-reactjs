@@ -21,6 +21,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import MenuItem from '@material-ui/core/MenuItem';
 
 import { Input, DecimalInput } from './styles';
+import ProgressBackdrop from '@components/base/ProgressBackdrop';
 
 import api from '@services/api';
 import handleAxiosError from '@utils/handleAxiosError';
@@ -66,7 +67,11 @@ type Client = {
   name: string;
 };
 
-interface InitialValuesData extends Inputs {
+type InitialValuesData = {
+  date: string | Date;
+  clientName: string;
+  paymentStatus: string;
+  deliveryStatus: string;
   saleItems: Array<{
     id: string;
     unitPrice: number;
@@ -83,7 +88,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 }));
 
 const SaleForm: FC<SaleFormProps> = (props) => {
-  const { saleId, initialValues, onEdited } = props;
+  const {
+    saleId,
+    initialValues,
+    onEdited
+  } = props;
 
   const history = useHistory();
   const { control, handleSubmit, register, setValue, getValues, formState: { errors } } = useForm<Inputs>();
@@ -94,6 +103,18 @@ const SaleForm: FC<SaleFormProps> = (props) => {
   const [harvests, setHarvests] = useState<Harvest[]>([]);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [prices, setPrices] = useState<{ [key: string]: number }>({});
+
+  const [dependencies, setDependencies] = useState<{
+    isInitialValuesLoaded: boolean;
+    isClientsLoaded: boolean;
+    isHarvestsLoaded: boolean;
+  }>({ 
+    isInitialValuesLoaded: false, 
+    isClientsLoaded: false, 
+    isHarvestsLoaded: false 
+  });
+  
+  const [backdrop, setBackdrop] = useState(false);
 
   const initForm = useCallback(() => {
     const iv = initialValues;
@@ -108,6 +129,8 @@ const SaleForm: FC<SaleFormProps> = (props) => {
         setQuantity(item.harvest.id, item.quantity);
         setPrice(item.harvest.id, item.unitPrice);
       });
+
+      setDependencies((prev) => ({ ...prev, isInitialValuesLoaded: true }));
     }
   }, [initialValues, setValue]);
 
@@ -118,7 +141,8 @@ const SaleForm: FC<SaleFormProps> = (props) => {
       })
       .catch((err) => {
         handleAxiosError(err, addSnackbar);
-      });
+      })
+      .finally(() => setDependencies((prev) => ({ ...prev, isClientsLoaded: true })));
   };
 
   const getHarvests = () => {
@@ -128,7 +152,8 @@ const SaleForm: FC<SaleFormProps> = (props) => {
       })
       .catch((err) => {
         handleAxiosError(err, addSnackbar);
-      });
+      })
+      .finally(() => setDependencies((prev) => ({ ...prev, isHarvestsLoaded: true })));
   };
 
   const setQuantity = (key: string, value: string | number) => {
@@ -156,6 +181,8 @@ const SaleForm: FC<SaleFormProps> = (props) => {
   }
 
   const onSubmit = (data: Inputs) => {
+    setBackdrop(true);
+
     const saleItems = [];
 
     for (const key in quantities) {
@@ -190,6 +217,7 @@ const SaleForm: FC<SaleFormProps> = (props) => {
         })
         .catch((err) => {
           handleAxiosError(err, addSnackbar);
+          setBackdrop(false);
         });
       return;
     }
@@ -201,8 +229,15 @@ const SaleForm: FC<SaleFormProps> = (props) => {
       })
       .catch((err) => {
         handleAxiosError(err, addSnackbar);
+        setBackdrop(false);
       });
   };
+
+  const isDependenciesLoaded = useMemo(() => {
+    const { isInitialValuesLoaded, isClientsLoaded, isHarvestsLoaded } = dependencies;
+    if (!!saleId) return isInitialValuesLoaded && isClientsLoaded && isHarvestsLoaded;
+    return isClientsLoaded && isHarvestsLoaded;
+  }, [dependencies, saleId]);
 
   const memoHarvests = useMemo(() => {
     const memoHarvests = [...harvests];
@@ -210,7 +245,7 @@ const SaleForm: FC<SaleFormProps> = (props) => {
     const iv = initialValues;
 
     if (iv) {
-      iv.saleItems.forEach((item) => {
+      iv.saleItems?.forEach((item) => {
         if (item.harvest.inStock === 0) {
           memoHarvests.push(item.harvest);
         }
@@ -267,6 +302,8 @@ const SaleForm: FC<SaleFormProps> = (props) => {
 
   return (
     <div>
+      <ProgressBackdrop open={backdrop || !isDependenciesLoaded} />
+
       <Box mx={1}>
         <form id="saleForm" onSubmit={handleSubmit(onSubmit)}>
           <Controller

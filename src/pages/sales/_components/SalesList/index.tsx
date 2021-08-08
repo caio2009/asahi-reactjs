@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import MoreVert from '@material-ui/icons/MoreVert';
 
@@ -87,9 +88,12 @@ const SalesList: FC<SalesListProps> = (props) => {
   const [deleteProgress, setDeleteProgress] = useState(false);
   const [saleDetailsDialog, setSaleDetailsDialog] = useState(false);
   const [editSaleDialog, setEditSaleDialog] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(true);
 
   const getSales = useCallback(() => {
     if (!query) {
+      if (sales.length === 0 || sales.length >= 20) setLoadingProgress(true);
+
       api.get('sales/pages', { params: { page } })
         .then((res) => {
           setSales((prev: Sale[]) => [...prev, ...res.data]);
@@ -97,13 +101,16 @@ const SalesList: FC<SalesListProps> = (props) => {
         })
         .catch((err) => {
           handleAxiosError(err, addSnackbar);
-        });
+        })
+        .finally(() => setLoadingProgress(false));
     }
     // eslint-disable-next-line
   }, [page, query]);
 
   const searchSalesByClientName = useCallback(() => {
     if (query) {
+      if (sales.length === 0 || sales.length >= 20) setLoadingProgress(true);
+
       api.get('sales/search', {
         params: {
           filter,
@@ -117,7 +124,8 @@ const SalesList: FC<SalesListProps> = (props) => {
         })
         .catch((err) => {
           handleAxiosError(err, addSnackbar);
-        });
+        })
+        .finally(() => setLoadingProgress(false));
     }
     // eslint-disable-next-line
   }, [query, page]);
@@ -157,7 +165,7 @@ const SalesList: FC<SalesListProps> = (props) => {
       }
     });
   };
-  
+
   const closeMenu = () => {
     setMenuAnchor(null);
   };
@@ -291,6 +299,18 @@ const SalesList: FC<SalesListProps> = (props) => {
         ))}
       </List>
 
+      {!loadingProgress && sales.length === 0 && (
+        <Typography variant="h6" align="center" color="textSecondary">
+          Vazio...
+        </Typography>
+      )}
+
+      {loadingProgress && (
+        <FlexBox>
+          <CircularProgress />
+        </FlexBox>
+      )}
+
       <Menu
         anchorEl={menuAnchor}
         keepMounted
@@ -330,21 +350,23 @@ const SalesList: FC<SalesListProps> = (props) => {
         onClose={() => setDeleteProgress(false)}
       />
 
-      <SaleDetailsDialog
-        saleId={selectedId}
-        open={saleDetailsDialog}
-        onClose={() => setSaleDetailsDialog(false)}
-        onEdit={editSale}
-        onDelete={handleSaleDeleteFromDialog}
-        onPaymenStatusChange={handleSalePaymentStatusChange}
-      />
+      {saleDetailsDialog && (
+        <SaleDetailsDialog
+          saleId={selectedId}
+          onClose={() => setSaleDetailsDialog(false)}
+          onEdit={editSale}
+          onDelete={handleSaleDeleteFromDialog}
+          onPaymenStatusChange={handleSalePaymentStatusChange}
+        />
+      )}
 
-      <EditSaleDialog
-        saleId={selectedId}
-        open={editSaleDialog}
-        onClose={() => setEditSaleDialog(false)}
-        onEdited={handleSaleEdited}
-      />
+      {editSaleDialog && (
+        <EditSaleDialog
+          saleId={selectedId}
+          onClose={() => setEditSaleDialog(false)}
+          onEdited={handleSaleEdited}
+        />
+      )}
     </div>
   );
 };

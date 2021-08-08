@@ -8,12 +8,12 @@ import Button from '@material-ui/core/Button';
 
 import AppBar from '@components/base/AppBar';
 import SaleForm from '../SaleForm';
+import ProgressBackdrop from '@components/base/ProgressBackdrop';
 
 import api from '@services/api';
 import handleAxiosError from '@utils/handleAxiosError';
 
 type EditSaleDialogProps = {
-  open: boolean;
   saleId?: string | null;
   onClose(): void;
   onEdited(): void;
@@ -55,13 +55,15 @@ type Sale = {
 
 
 const EditSaleDialog: FC<EditSaleDialogProps> = (props) => {
-  const { open, saleId, onClose, onEdited } = props;
+  const { saleId, onClose, onEdited } = props;
 
   const history = useHistory();
   const { path } = useRouteMatch();
   const { addSnackbar } = useSnackbar();
 
   const [sale, setSale] = useState<Sale | null>(null);
+
+  const [backdrop, setBackdrop] = useState(true);
 
   const getSale = useCallback(() => {
     if (saleId) {
@@ -71,30 +73,39 @@ const EditSaleDialog: FC<EditSaleDialogProps> = (props) => {
         })
         .catch((err) => {
           handleAxiosError(err, addSnackbar);
-        });
+        })
+        .finally(() => setBackdrop(false));
     }
     // eslint-disable-next-line
   }, [saleId]);
 
   const goBack = () => {
     onClose();
+    setBackdrop(true);
+    setSale(null);
+  };
+
+  const handleOnClose = () => {
+    onClose();
+    setBackdrop(true);
+    setSale(null);
   };
 
   const handleSaleEdited = () => {
     onClose();
     onEdited();
+    setBackdrop(true);
+    setSale(null);
   };
 
   useEffect(() => {
-    if (open) {
-      const unblock = history.block((location, action) => {
-        if (action === 'POP') {
-          onClose();
-          return open ? false : undefined;
-        }
-      });
-      return () => unblock();
-    }
+    const unblock = history.block((location, action) => {
+      if (action === 'POP') {
+        handleOnClose();
+        return undefined;
+      }
+    });
+    return () => unblock();
     // eslint-disable-next-line
   }, [history, onClose]);
 
@@ -106,12 +117,14 @@ const EditSaleDialog: FC<EditSaleDialogProps> = (props) => {
     getSale();
   }, [getSale]);
 
-  return open ? (
+  return (
     <Dialog
       fullScreen
       open={true}
-      onClose={onClose}
+      onClose={handleOnClose}
     >
+      <ProgressBackdrop open={backdrop} />
+
       <AppBar
         title="Editar Venda"
         goBack={goBack}
@@ -129,18 +142,18 @@ const EditSaleDialog: FC<EditSaleDialogProps> = (props) => {
           <SaleForm
             saleId={saleId || undefined}
             initialValues={{
-              date: sale.date,
-              clientName: sale.clientName,
-              paymentStatus: sale.paymentStatus,
-              deliveryStatus: sale.deliveryStatus,
-              saleItems: sale.saleItems
+              date: sale?.date,
+              clientName: sale?.clientName,
+              paymentStatus: sale?.paymentStatus,
+              deliveryStatus: sale?.deliveryStatus,
+              saleItems: sale?.saleItems
             }}
             onEdited={handleSaleEdited}
           />
         )}
       </Box>
     </Dialog>
-  ) : null;
+  );
 };
 
 export default EditSaleDialog;

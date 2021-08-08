@@ -13,8 +13,10 @@ import ButtonBase from '@material-ui/core/ButtonBase';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Box from '@material-ui/core/Box';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import SaleDetailsDialog from '@pages/sales/_components/SaleDetailsDialog';
+import FlexBox from '@components/base/FlexBox';
 
 import api from '@services/api';
 import handleAxiosError from '@utils/handleAxiosError';
@@ -72,8 +74,11 @@ const SalesList: FC = () => {
   const [deliveryStatusMenuAnchor, setListItemMenuAnchor] = useState<HTMLButtonElement | null>(null);
   const [filterMenuAnchor, setFilterMenuAnchor] = useState<HTMLButtonElement | null>(null);
   const [saleDetailsDialog, setSaleDetailsDialog] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(true);
 
   const getSalePages = useCallback(() => {
+    if (sales.length === 0 || sales.length >= 20) setLoadingProgress(true);
+
     api.get('sales/pages', { params: { page } })
       .then((res) => {
         setSales((prev) => [...prev, ...res.data]);
@@ -81,18 +86,22 @@ const SalesList: FC = () => {
       })
       .catch((err) => {
         handleAxiosError(err, addSnackbar);
-      });
+      })
+      .finally(() => setLoadingProgress(false));
     // eslint-disable-next-line
   }, [page]);
 
   const getWaitingSales = useCallback(() => {
+    setLoadingProgress(true);
+
     api.get('sales/waiting')
       .then((res) => {
         setSales(res.data);
       })
       .catch((err) => {
         handleAxiosError(err, addSnackbar);
-      });
+      })
+      .finally(() => setLoadingProgress(false));
     // eslint-disable-next-line
   }, []);
 
@@ -153,10 +162,11 @@ const SalesList: FC = () => {
   };
 
   const handleFilterMenuItemClick = (value: string) => {
-    setSales([]);
-
     if (value === filter) return;
+    
     setFilter(value);
+    setSales([]);
+    setPage(1);
 
     closeFilterMenu();
   };
@@ -229,6 +239,18 @@ const SalesList: FC = () => {
         ))}
       </List>
 
+      {!loadingProgress && sales.length === 0 && (
+        <Typography variant="h6" align="center" color="textSecondary">
+          Vazio...
+        </Typography>
+      )}
+
+      {loadingProgress && (
+        <FlexBox>
+          <CircularProgress />
+        </FlexBox>
+      )}
+
       <Menu
         anchorEl={deliveryStatusMenuAnchor}
         keepMounted
@@ -249,12 +271,13 @@ const SalesList: FC = () => {
         </MenuItem>
       </Menu>
 
-      <SaleDetailsDialog
-        editable={false}
-        saleId={selectedId}
-        open={saleDetailsDialog}
-        onClose={() => setSaleDetailsDialog(false)}
-      />
+      {saleDetailsDialog && (
+        <SaleDetailsDialog
+          editable={false}
+          saleId={selectedId}
+          onClose={() => setSaleDetailsDialog(false)}
+        />
+      )}
     </div>
   );
 };

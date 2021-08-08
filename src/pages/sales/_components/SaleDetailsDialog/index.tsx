@@ -23,9 +23,9 @@ import FlexBox from '@components/base/FlexBox';
 import api from '@services/api';
 import handleAxiosError from '@utils/handleAxiosError';
 import { format as formatDate } from 'date-fns';
+import ProgressBackdrop from '@components/base/ProgressBackdrop';
 
 type SaleDetailsDialogProps = {
-  open: boolean;
   saleId?: string | null;
   editable?: boolean;
   onClose(): void;
@@ -79,7 +79,6 @@ const paymentStatus: { [key: string]: string } = {
 
 const SaleDetailsDialog: FC<SaleDetailsDialogProps> = (props) => {
   const {
-    open,
     saleId,
     editable = true,
     onClose,
@@ -110,11 +109,11 @@ const SaleDetailsDialog: FC<SaleDetailsDialogProps> = (props) => {
   }, [saleId]);
 
   const goBack = () => {
-    onClose();
-  }
+    handleOnClose();
+  };
 
   const editSale = () => {
-    onClose();
+    handleOnClose();
     if (onEdit) onEdit();
   };
 
@@ -126,13 +125,18 @@ const SaleDetailsDialog: FC<SaleDetailsDialogProps> = (props) => {
         api.delete(`/sales/${saleId}`)
           .then(() => {
             addSnackbar('Venda apagada com sucesso!');
-            onClose();
+            handleOnClose();
             if (onDelete && saleId) onDelete(saleId);
           })
           .catch((err) => handleAxiosError(err, addSnackbar))
           .finally(() => setDeleteProgress(false));
       }
     });
+  };
+
+  const handleOnClose = () => {
+    onClose();
+    setSale(null);
   };
 
   const handlePaymentStatusChange = () => {
@@ -146,7 +150,7 @@ const SaleDetailsDialog: FC<SaleDetailsDialogProps> = (props) => {
             paymentStatus
           }) : null);
 
-          if (onPaymenStatusChange) onPaymenStatusChange({...sale, paymentStatus});
+          if (onPaymenStatusChange) onPaymenStatusChange({ ...sale, paymentStatus });
         })
         .catch((err) => {
           handleAxiosError(err, addSnackbar);
@@ -155,16 +159,14 @@ const SaleDetailsDialog: FC<SaleDetailsDialogProps> = (props) => {
   }
 
   useEffect(() => {
-    if (open) {
-      const unblock = history.block((location, action) => {
-        if (action === 'POP') {
-          onClose();
-          return open ? false : undefined;
-        }
-      });
+    const unblock = history.block((location, action) => {
+      if (action === 'POP') {
+        handleOnClose();
+        return undefined;
+      }
+    });
 
-      return () => unblock();
-    }
+    return () => unblock();
     // eslint-disable-next-line
   }, [history, onClose]);
 
@@ -176,12 +178,14 @@ const SaleDetailsDialog: FC<SaleDetailsDialogProps> = (props) => {
     getSale();
   }, [getSale]);
 
-  return open ? (
+  return (
     <Dialog
       fullScreen
       open={true}
-      onClose={onClose}
+      onClose={handleOnClose}
     >
+      <ProgressBackdrop open={!sale} />
+
       <AppBar
         title="Detahes da Venda"
         backButton
@@ -196,7 +200,7 @@ const SaleDetailsDialog: FC<SaleDetailsDialogProps> = (props) => {
         ]}
       />
 
-      <Box mt={8} mb={4}>
+      <Box mt={12} mb={4}>
         <FlexBox>
           <Button
             variant="outlined"
@@ -304,7 +308,7 @@ const SaleDetailsDialog: FC<SaleDetailsDialogProps> = (props) => {
         onClose={() => setDeleteProgress(false)}
       />
     </Dialog>
-  ) : null;
+  );
 };
 
 export default SaleDetailsDialog;
